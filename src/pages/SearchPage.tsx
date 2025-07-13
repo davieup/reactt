@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
-import { users } from '@/data/mockData';
+
 import { User } from '@/types';
 
 export function SearchPage() {

@@ -1,54 +1,46 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import React from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { PostComposer } from '@/components/PostComposer';
-import { currentUser } from '@/data/mockData';
-import { useToast } from '@/hooks/use-toast';
+import { BottomNav } from '@/components/BottomNav';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 export function ComposePage() {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
-  const handlePost = (content: string, image?: string) => {
-    // In a real app, this would send to an API
-    console.log('New post:', { content, image });
-    
-    toast({
-      title: "Post created!",
-      description: "Your post has been shared successfully.",
-    });
-    
-    navigate('/');
-  };
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
 
-  const handleCancel = () => {
+  const handlePost = () => {
     navigate('/');
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-40">
-        <div className="max-w-md mx-auto px-4 py-4 flex items-center gap-4">
-          <button
-            onClick={() => navigate('/')}
-            className="p-2 hover:bg-muted rounded-full transition-colors"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="text-xl font-bold text-foreground">New Post</h1>
-        </div>
-      </header>
-
-      {/* Composer */}
-      <main className="max-w-md mx-auto px-4 py-6">
-        <PostComposer
-          user={currentUser}
-          onPost={handlePost}
-          onCancel={handleCancel}
-          placeholder="What's on your mind?"
-        />
-      </main>
+      <div className="max-w-2xl mx-auto">
+        <header className="sticky top-0 bg-background/80 backdrop-blur-md border-b border-border p-4 z-10">
+          <div className="flex items-center space-x-4">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => navigate('/')}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h1 className="text-xl font-bold">Novo Post</h1>
+          </div>
+        </header>
+        
+        <main className="p-4">
+          <PostComposer onPost={handlePost} />
+        </main>
+      </div>
+      
+      <BottomNav />
     </div>
   );
 }

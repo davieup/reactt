@@ -7,14 +7,22 @@ export interface User {
   verified?: boolean;
 }
 
+export interface Comment {
+  id: string;
+  userId: string;
+  postId: string;
+  content: string;
+  timestamp: Date;
+}
+
 export interface Post {
   id: string;
-  user: User;
+  userId: string;
   content: string;
   image?: string;
   timestamp: Date;
-  likes: number;
-  comments: number;
-  reposts: number;
-  isLiked?: boolean;
+  likes: string[];
+  comments: Comment[];
+  reposts: string[];
+  repostOf?: string;
 }

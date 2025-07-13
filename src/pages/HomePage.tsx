@@ -1,53 +1,44 @@
-import { useState } from 'react';
+import React from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { usePosts } from '@/contexts/PostContext';
 import { PostCard } from '@/components/PostCard';
 import { BottomNav } from '@/components/BottomNav';
-import { initialPosts } from '@/data/mockData';
-import { Post } from '@/types';
+import { Button } from '@/components/ui/button';
+import { LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function HomePage() {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const { user, logout } = useAuth();
+  const { posts } = usePosts();
+  const navigate = useNavigate();
 
-  const handleLike = (postId: string) => {
-    setPosts(currentPosts =>
-      currentPosts.map(post =>
-        post.id === postId
-          ? {
-              ...post,
-              isLiked: !post.isLiked,
-              likes: post.isLiked ? post.likes - 1 : post.likes + 1
-            }
-          : post
-      )
-    );
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-40">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-foreground">Home</h1>
-        </div>
-      </header>
-
-      {/* Feed */}
-      <main className="max-w-md mx-auto px-4 py-4">
-        <div className="space-y-4">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-2xl mx-auto">
+        <header className="sticky top-0 bg-background/80 backdrop-blur-md border-b border-border p-4 z-10 flex justify-between items-center">
+          <h1 className="text-xl font-bold">Home</h1>
+          <Button variant="ghost" size="icon" onClick={handleLogout}>
+            <LogOut className="w-5 h-5" />
+          </Button>
+        </header>
+        
+        <main>
           {posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              onLike={handleLike}
-            />
+            <PostCard key={post.id} post={post} />
           ))}
-        </div>
-
-        {/* End of feed message */}
-        <div className="text-center py-8">
-          <p className="text-text-muted">You're all caught up! 🎉</p>
-        </div>
-      </main>
-
+        </main>
+      </div>
+      
       <BottomNav />
     </div>
   );
