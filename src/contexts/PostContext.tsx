@@ -1,13 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Post, Comment } from '@/types';
+import { useNotifications } from '@/contexts/NotificationContext';
 import postImage1 from '@/assets/post-image-1.jpg';
 
 interface PostContextType {
   posts: Post[];
-  addPost: (content: string, image?: string) => void;
+  addPost: (content: string, image?: string, video?: string) => void;
   likePost: (postId: string, userId: string) => void;
   addComment: (postId: string, userId: string, content: string) => void;
   repost: (postId: string, userId: string) => void;
+  deletePost: (postId: string) => void;
+  editPost: (postId: string, content: string) => void;
+  viewPost: (postId: string) => void;
 }
 
 const defaultPosts: Post[] = [];
@@ -43,7 +47,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('posts', JSON.stringify(updatedPosts));
   };
 
-  const addPost = (content: string, image?: string) => {
+  const addPost = (content: string, image?: string, video?: string) => {
     const currentUser = localStorage.getItem('currentUser');
     if (!currentUser) return;
     
@@ -53,10 +57,12 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       userId: user.id,
       content,
       image,
+      video,
       timestamp: new Date(),
       likes: [],
       comments: [],
-      reposts: []
+      reposts: [],
+      views: 0
     };
 
     const updatedPosts = [newPost, ...posts];
@@ -117,11 +123,13 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       userId,
       content: originalPost.content,
       image: originalPost.image,
+      video: originalPost.video,
       timestamp: new Date(),
       likes: [],
       comments: [],
       reposts: [],
-      repostOf: postId
+      repostOf: postId,
+      views: 0
     };
 
     const updatedPosts = posts.map(post => {
@@ -135,13 +143,41 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     savePosts(updatedPosts);
   };
 
+  const deletePost = (postId: string) => {
+    const updatedPosts = posts.filter(post => post.id !== postId);
+    savePosts(updatedPosts);
+  };
+
+  const editPost = (postId: string, content: string) => {
+    const updatedPosts = posts.map(post => {
+      if (post.id === postId) {
+        return { ...post, content };
+      }
+      return post;
+    });
+    savePosts(updatedPosts);
+  };
+
+  const viewPost = (postId: string) => {
+    const updatedPosts = posts.map(post => {
+      if (post.id === postId) {
+        return { ...post, views: post.views + 1 };
+      }
+      return post;
+    });
+    savePosts(updatedPosts);
+  };
+
   return (
     <PostContext.Provider value={{
       posts,
       addPost,
       likePost,
       addComment,
-      repost
+      repost,
+      deletePost,
+      editPost,
+      viewPost
     }}>
       {children}
     </PostContext.Provider>

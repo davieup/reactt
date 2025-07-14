@@ -6,8 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Heart, MessageCircle, Repeat2, MoreHorizontal, Check, Send } from 'lucide-react';
+import { Heart, MessageCircle, Repeat2, MoreHorizontal, Check, Send, Eye, Edit, Trash2 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 interface PostCardProps {
   post: Post;
@@ -15,9 +18,11 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const { user, users } = useAuth();
-  const { likePost, addComment, repost } = usePosts();
+  const { likePost, addComment, repost, deletePost, editPost, viewPost } = usePosts();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(post.content);
 
   if (!user) return null;
 
@@ -42,6 +47,26 @@ export function PostCard({ post }: PostCardProps) {
       setCommentText('');
     }
   };
+
+  const handleDelete = () => {
+    deletePost(post.id);
+  };
+
+  const handleEdit = () => {
+    if (editContent.trim()) {
+      editPost(post.id, editContent);
+      setIsEditing(false);
+    }
+  };
+
+  const handleView = () => {
+    viewPost(post.id);
+  };
+
+  // Increment views when component mounts
+  React.useEffect(() => {
+    handleView();
+  }, []);
 
   return (
     <Card className="border-none border-b border-border last:border-b-0 rounded-none glass-effect">
@@ -73,7 +98,21 @@ export function PostCard({ post }: PostCardProps) {
             </div>
             
             <div className="space-y-2">
-              <p className="text-foreground leading-relaxed">{post.content}</p>
+              {isEditing ? (
+                <div className="space-y-2">
+                  <Textarea
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    className="min-h-[80px]"
+                  />
+                  <div className="flex space-x-2">
+                    <Button size="sm" onClick={handleEdit}>Salvar</Button>
+                    <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancelar</Button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-foreground leading-relaxed">{post.content}</p>
+              )}
               
               {post.image && (
                 <div className="rounded-2xl overflow-hidden bg-secondary">
@@ -81,6 +120,16 @@ export function PostCard({ post }: PostCardProps) {
                     src={post.image} 
                     alt="Post content" 
                     className="w-full max-h-96 object-cover"
+                  />
+                </div>
+              )}
+
+              {post.video && (
+                <div className="rounded-2xl overflow-hidden bg-secondary">
+                  <video 
+                    src={post.video} 
+                    controls
+                    className="w-full max-h-96"
                   />
                 </div>
               )}
@@ -137,8 +186,35 @@ export function PostCard({ post }: PostCardProps) {
                 size="sm"
                 className="text-muted-foreground hover:text-foreground hover:bg-accent group"
               >
-                <MoreHorizontal className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <Eye className="w-4 h-4 mr-1 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">{post.views || 0}</span>
               </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground hover:bg-accent group"
+                  >
+                    <MoreHorizontal className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {post.userId === user.id && (
+                    <>
+                      <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Deletar
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <Collapsible open={showComments} onOpenChange={setShowComments}>

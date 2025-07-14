@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { ImageIcon, X } from 'lucide-react';
+import { ImageIcon, VideoIcon, X } from 'lucide-react';
 
 interface PostComposerProps {
   onPost?: () => void;
@@ -16,6 +16,7 @@ export function PostComposer({ onPost }: PostComposerProps) {
   const { addPost } = usePosts();
   const [content, setContent] = useState('');
   const [image, setImage] = useState<string | null>(null);
+  const [video, setVideo] = useState<string | null>(null);
   const maxLength = 500;
 
   if (!user) return null;
@@ -26,6 +27,19 @@ export function PostComposer({ onPost }: PostComposerProps) {
       const reader = new FileReader();
       reader.onload = (e) => {
         setImage(e.target?.result as string);
+        setVideo(null); // Clear video if image is selected
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setVideo(e.target?.result as string);
+        setImage(null); // Clear image if video is selected
       };
       reader.readAsDataURL(file);
     }
@@ -33,15 +47,17 @@ export function PostComposer({ onPost }: PostComposerProps) {
 
   const handlePost = () => {
     if (content.trim()) {
-      addPost(content, image || undefined);
+      addPost(content, image || undefined, video || undefined);
       setContent('');
       setImage(null);
+      setVideo(null);
       onPost?.();
     }
   };
 
-  const removeImage = () => {
+  const removeMedia = () => {
     setImage(null);
+    setVideo(null);
   };
 
   return (
@@ -73,7 +89,25 @@ export function PostComposer({ onPost }: PostComposerProps) {
                   variant="destructive"
                   size="icon"
                   className="absolute top-2 right-2 h-8 w-8 rounded-full"
-                  onClick={removeImage}
+                  onClick={removeMedia}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            {video && (
+              <div className="relative">
+                <video 
+                  src={video} 
+                  controls
+                  className="w-full max-h-64 rounded-xl"
+                />
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2 h-8 w-8 rounded-full"
+                  onClick={removeMedia}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -91,6 +125,18 @@ export function PostComposer({ onPost }: PostComposerProps) {
                   />
                   <div className="p-2 rounded-full hover:bg-accent transition-colors">
                     <ImageIcon className="h-5 w-5 text-primary" />
+                  </div>
+                </label>
+                
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoUpload}
+                    className="hidden"
+                  />
+                  <div className="p-2 rounded-full hover:bg-accent transition-colors">
+                    <VideoIcon className="h-5 w-5 text-primary" />
                   </div>
                 </label>
               </div>
