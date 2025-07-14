@@ -26,8 +26,8 @@ export function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto">
-        <header className="sticky top-0 bg-background/80 backdrop-blur-md border-b border-border p-4 z-10 flex justify-between items-center">
-          <h1 className="text-xl font-bold">Home</h1>
+        <header className="sticky top-0 glass-effect border-b border-border p-4 z-10 flex justify-between items-center">
+          <h1 className="text-xl font-bold">React</h1>
           <Button variant="ghost" size="icon" onClick={handleLogout}>
             <LogOut className="w-5 h-5" />
           </Button>

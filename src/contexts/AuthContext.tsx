@@ -24,46 +24,7 @@ interface AuthContextType {
   users: AuthUser[];
 }
 
-const defaultUsers: AuthUser[] = [
-  {
-    id: '1',
-    email: 'ana@example.com',
-    password: '123456',
-    username: 'ana_silva',
-    name: 'Ana Silva',
-    avatar: profile1,
-    bio: 'Designer apaixonada por UI/UX 🎨',
-    verified: true,
-    following: ['2'],
-    followers: ['2', '3'],
-    profileLink: 'https://anasilva.design'
-  },
-  {
-    id: '2', 
-    email: 'carlos@example.com',
-    password: '123456',
-    username: 'carlos_dev',
-    name: 'Carlos Santos',
-    avatar: profile2,
-    bio: 'Desenvolvedor Full Stack | React enthusiast 💻',
-    verified: false,
-    following: ['1', '3'],
-    followers: ['1'],
-    profileLink: 'https://github.com/carlos'
-  },
-  {
-    id: '3',
-    email: 'maria@example.com', 
-    password: '123456',
-    username: 'maria_tech',
-    name: 'Maria Costa',
-    avatar: profile3,
-    bio: 'Tech Lead | Coffee lover ☕',
-    verified: true,
-    following: ['1'],
-    followers: ['1', '2']
-  }
-];
+const defaultUsers: AuthUser[] = [];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

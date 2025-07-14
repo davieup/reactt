@@ -43,7 +43,7 @@ export function SearchPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <header className="bg-card border-b border-border sticky top-0 z-40">
+      <header className="glass-effect border-b border-border sticky top-0 z-40">
         <div className="max-w-md mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold text-foreground mb-4">Search</h1>
           

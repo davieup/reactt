@@ -44,7 +44,7 @@ export function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <Card className="border-none border-b border-border last:border-b-0 rounded-none">
+    <Card className="border-none border-b border-border last:border-b-0 rounded-none glass-effect">
       <CardContent className="p-4 space-y-3">
         {post.repostOf && (
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
