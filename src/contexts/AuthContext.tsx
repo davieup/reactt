@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '@/types';
+import profile1 from '@/assets/profile-1.jpg';
+import profile2 from '@/assets/profile-2.jpg';
+import profile3 from '@/assets/profile-3.jpg';
 
 interface AuthUser extends User {
   email: string;
@@ -21,6 +24,47 @@ interface AuthContextType {
   users: AuthUser[];
 }
 
+const defaultUsers: AuthUser[] = [
+  {
+    id: '1',
+    email: 'ana@example.com',
+    password: '123456',
+    username: 'ana_silva',
+    name: 'Ana Silva',
+    avatar: profile1,
+    bio: 'Designer apaixonada por UI/UX 🎨',
+    verified: true,
+    following: ['2'],
+    followers: ['2', '3'],
+    profileLink: 'https://anasilva.design'
+  },
+  {
+    id: '2', 
+    email: 'carlos@example.com',
+    password: '123456',
+    username: 'carlos_dev',
+    name: 'Carlos Santos',
+    avatar: profile2,
+    bio: 'Desenvolvedor Full Stack | React enthusiast 💻',
+    verified: false,
+    following: ['1', '3'],
+    followers: ['1'],
+    profileLink: 'https://github.com/carlos'
+  },
+  {
+    id: '3',
+    email: 'maria@example.com', 
+    password: '123456',
+    username: 'maria_tech',
+    name: 'Maria Costa',
+    avatar: profile3,
+    bio: 'Tech Lead | Coffee lover ☕',
+    verified: true,
+    following: ['1'],
+    followers: ['1', '2']
+  }
+];
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -37,6 +81,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     if (savedUsers) {
       setUsers(JSON.parse(savedUsers));
+    } else {
+      // Initialize with default users if none exist
+      setUsers(defaultUsers);
+      localStorage.setItem('allUsers', JSON.stringify(defaultUsers));
     }
   }, []);
 

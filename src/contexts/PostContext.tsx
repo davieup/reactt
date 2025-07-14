@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Post, Comment } from '@/types';
+import postImage1 from '@/assets/post-image-1.jpg';
 
 interface PostContextType {
   posts: Post[];
@@ -8,6 +9,45 @@ interface PostContextType {
   addComment: (postId: string, userId: string, content: string) => void;
   repost: (postId: string, userId: string) => void;
 }
+
+const defaultPosts: Post[] = [
+  {
+    id: '1',
+    userId: '1',
+    content: 'Ótimo dia para programar! Acabei de terminar um novo projeto em React. 🚀',
+    image: postImage1,
+    timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+    likes: ['2', '3'],
+    comments: [
+      {
+        id: '1',
+        userId: '2',
+        postId: '1',
+        content: 'Parabéns! Ficou incrível!',
+        timestamp: new Date(Date.now() - 1000 * 60 * 15)
+      }
+    ],
+    reposts: []
+  },
+  {
+    id: '2',
+    userId: '2',
+    content: 'Alguém mais está animado com as novas funcionalidades do React? 💡',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+    likes: ['1'],
+    comments: [],
+    reposts: []
+  },
+  {
+    id: '3',
+    userId: '3',
+    content: 'Café da manhã perfeito para começar bem o dia! ☕',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4), // 4 hours ago
+    likes: ['1', '2'],
+    comments: [],
+    reposts: []
+  }
+];
 
 const PostContext = createContext<PostContextType | undefined>(undefined);
 
@@ -28,6 +68,10 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
         }))
       }));
       setPosts(postsWithDates);
+    } else {
+      // Initialize with default posts if none exist
+      setPosts(defaultPosts);
+      localStorage.setItem('posts', JSON.stringify(defaultPosts));
     }
   }, []);
 

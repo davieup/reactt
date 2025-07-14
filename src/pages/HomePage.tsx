@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePosts } from '@/contexts/PostContext';
 import { PostCard } from '@/components/PostCard';
@@ -12,10 +12,11 @@ export function HomePage() {
   const { posts } = usePosts();
   const navigate = useNavigate();
 
-  if (!user) {
-    navigate('/login');
-    return null;
-  }
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   const handleLogout = () => {
     logout();
