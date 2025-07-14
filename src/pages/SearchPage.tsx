@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { BottomNav } from '@/components/BottomNav';
-
+import { useAuth } from '@/contexts/AuthContext';
 import { User } from '@/types';
 
 export function SearchPage() {
+  const { users } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
 
