@@ -10,6 +10,7 @@ import { HomePage } from "./pages/HomePage";
 import { ComposePage } from "./pages/ComposePage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { SearchPage } from "./pages/SearchPage";
+import { TrendFeedPage } from "./pages/TrendFeedPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { FollowPage } from "./pages/FollowPage";
@@ -34,6 +35,7 @@ const App = () => (
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/follow" element={<FollowPage />} />
               <Route path="/search" element={<SearchPage />} />
+              <Route path="/trend/:hashtag" element={<TrendFeedPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

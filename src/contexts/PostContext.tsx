@@ -12,6 +12,8 @@ interface PostContextType {
   deletePost: (postId: string) => void;
   editPost: (postId: string, content: string) => void;
   viewPost: (postId: string) => void;
+  getTrendingHashtags: () => { hashtag: string; count: number }[];
+  getPostsByHashtag: (hashtag: string) => Post[];
 }
 
 const defaultPosts: Post[] = [];
@@ -45,6 +47,42 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
   const savePosts = (updatedPosts: Post[]) => {
     setPosts(updatedPosts);
     localStorage.setItem('posts', JSON.stringify(updatedPosts));
+  };
+
+  const extractHashtags = (content: string): string[] => {
+    const hashtagRegex = /#[a-zA-Z0-9_]+/g;
+    return content.match(hashtagRegex) || [];
+  };
+
+  const getTrendingHashtags = () => {
+    const hashtagCount: { [key: string]: number } = {};
+    
+    // Contar hashtags dos últimos 7 dias
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    
+    posts.forEach(post => {
+      if (post.timestamp >= weekAgo) {
+        const hashtags = extractHashtags(post.content);
+        hashtags.forEach(hashtag => {
+          const cleanHashtag = hashtag.toLowerCase();
+          hashtagCount[cleanHashtag] = (hashtagCount[cleanHashtag] || 0) + 1;
+        });
+      }
+    });
+
+    return Object.entries(hashtagCount)
+      .map(([hashtag, count]) => ({ hashtag, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
+  };
+
+  const getPostsByHashtag = (hashtag: string) => {
+    const cleanHashtag = hashtag.toLowerCase().startsWith('#') ? hashtag.toLowerCase() : `#${hashtag.toLowerCase()}`;
+    return posts.filter(post => {
+      const postHashtags = extractHashtags(post.content).map(h => h.toLowerCase());
+      return postHashtags.includes(cleanHashtag);
+    }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   };
 
   const addPost = (content: string, image?: string, video?: string) => {
@@ -177,7 +215,9 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       repost,
       deletePost,
       editPost,
-      viewPost
+      viewPost,
+      getTrendingHashtags,
+      getPostsByHashtag
     }}>
       {children}
     </PostContext.Provider>

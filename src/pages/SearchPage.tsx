@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { BottomNav } from '@/components/BottomNav';
 import { useAuth } from '@/contexts/AuthContext';
+import { usePosts } from '@/contexts/PostContext';
 import { User } from '@/types';
 
 export function SearchPage() {
   const { users } = useAuth();
+  const { getTrendingHashtags } = usePosts();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
 
@@ -29,16 +33,12 @@ export function SearchPage() {
     setSearchResults([]);
   };
 
-  const trendingTopics = [
-    '#Design',
-    '#React',
-    '#TypeScript',
-    '#WebDev',
-    '#UX',
-    '#Coffee',
-    '#Minimalism',
-    '#TechTrends'
-  ];
+  const trendingHashtags = getTrendingHashtags();
+
+  const handleTrendClick = (hashtag: string) => {
+    const cleanHashtag = hashtag.startsWith('#') ? hashtag.slice(1) : hashtag;
+    navigate(`/trend/${cleanHashtag}`);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -117,29 +117,44 @@ export function SearchPage() {
         ) : (
           /* Trending Topics */
           <div>
-            <h2 className="text-lg font-bold text-foreground mb-4">Trending</h2>
+            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+              <TrendingUp size={20} />
+              Trending
+            </h2>
             
-            <div className="space-y-2">
-              {trendingTopics.map((topic, index) => (
-                <button
-                  key={topic}
-                  onClick={() => handleSearch(topic.slice(1))}
-                  className="block w-full text-left p-3 bg-card rounded-xl hover:bg-muted transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-foreground">{topic}</p>
-                      <p className="text-text-muted text-sm">
-                        {Math.floor(Math.random() * 50) + 10}K posts
-                      </p>
+            {trendingHashtags.length > 0 ? (
+              <div className="space-y-2">
+                {trendingHashtags.map((trend, index) => (
+                  <button
+                    key={trend.hashtag}
+                    onClick={() => handleTrendClick(trend.hashtag)}
+                    className="block w-full text-left p-3 bg-card rounded-xl hover:bg-muted transition-colors group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                          {trend.hashtag}
+                        </p>
+                        <p className="text-text-muted text-sm">
+                          {trend.count} post{trend.count !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                      <span className="text-text-muted text-sm">
+                        #{index + 1} trending
+                      </span>
                     </div>
-                    <span className="text-text-muted text-sm">
-                      #{index + 1} trending
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <TrendingUp size={48} className="text-text-muted mx-auto mb-4 opacity-50" />
+                <p className="text-text-muted">Nenhuma trend no momento</p>
+                <p className="text-text-muted text-sm mt-2">
+                  Use hashtags nos seus posts para criar trends!
+                </p>
+              </div>
+            )}
           </div>
         )}
       </main>
