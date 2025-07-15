@@ -8,10 +8,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ImageIcon, VideoIcon, X } from 'lucide-react';
 
 interface PostComposerProps {
-  onPost?: () => void;
+  onPost?: (content: string, image?: string, video?: string) => void;
+  onCancel?: () => void;
+  placeholder?: string;
 }
 
-export function PostComposer({ onPost }: PostComposerProps) {
+export function PostComposer({ onPost, onCancel, placeholder = "O que está acontecendo?" }: PostComposerProps) {
   const { user } = useAuth();
   const { addPost } = usePosts();
   const [content, setContent] = useState('');
@@ -47,11 +49,14 @@ export function PostComposer({ onPost }: PostComposerProps) {
 
   const handlePost = () => {
     if (content.trim()) {
-      addPost(content, image || undefined, video || undefined);
+      if (onPost) {
+        onPost(content, image || undefined, video || undefined);
+      } else {
+        addPost(content, image || undefined, video || undefined);
+      }
       setContent('');
       setImage(null);
       setVideo(null);
-      onPost?.();
     }
   };
 
@@ -73,7 +78,7 @@ export function PostComposer({ onPost }: PostComposerProps) {
             <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="O que está acontecendo?"
+              placeholder={placeholder}
               className="min-h-[120px] border-none resize-none text-lg placeholder:text-muted-foreground focus-visible:ring-0"
               maxLength={maxLength}
             />
@@ -152,13 +157,24 @@ export function PostComposer({ onPost }: PostComposerProps) {
                   {content.length}/{maxLength}
                 </span>
                 
-                <Button 
-                  onClick={handlePost}
-                  disabled={!content.trim() || content.length > maxLength}
-                  className="rounded-full px-6"
-                >
-                  Postar
-                </Button>
+                <div className="flex gap-2">
+                  {onCancel && (
+                    <Button 
+                      variant="outline"
+                      onClick={onCancel}
+                      className="rounded-full px-6"
+                    >
+                      Cancelar
+                    </Button>
+                  )}
+                  <Button 
+                    onClick={handlePost}
+                    disabled={!content.trim() || content.length > maxLength}
+                    className="rounded-full px-6"
+                  >
+                    Postar
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

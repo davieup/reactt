@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Post } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePosts } from '@/contexts/PostContext';
+import { useCommunities } from '@/contexts/CommunityContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +20,7 @@ interface PostCardProps {
 export function PostCard({ post }: PostCardProps) {
   const { user, users } = useAuth();
   const { likePost, addComment, repost, deletePost, editPost, viewPost } = usePosts();
+  const { getCommunityById } = useCommunities();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -29,6 +31,7 @@ export function PostCard({ post }: PostCardProps) {
   const postUser = users.find(u => u.id === post.userId);
   if (!postUser) return null;
 
+  const community = post.communityId ? getCommunityById(post.communityId) : null;
   const originalPost = post.repostOf ? users.find(u => u.id === post.repostOf) : null;
   const isLiked = post.likes.includes(user.id);
   const isReposted = post.reposts.includes(user.id);
@@ -88,6 +91,14 @@ export function PostCard({ post }: PostCardProps) {
             <div className="flex items-center space-x-2">
               <h3 className="font-semibold text-foreground">{postUser.name}</h3>
               <span className="text-muted-foreground">@{postUser.username}</span>
+              {community && (
+                <>
+                  <span className="text-muted-foreground">·</span>
+                  <span className="text-xs bg-muted px-2 py-1 rounded-full text-text-secondary">
+                    {community.name}
+                  </span>
+                </>
+              )}
               <span className="text-muted-foreground">·</span>
               <span className="text-muted-foreground text-sm">
                 {post.timestamp.toLocaleDateString('pt-BR')}

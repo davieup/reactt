@@ -5,7 +5,7 @@ import postImage1 from '@/assets/post-image-1.jpg';
 
 interface PostContextType {
   posts: Post[];
-  addPost: (content: string, image?: string, video?: string) => void;
+  addPost: (content: string, image?: string, video?: string, communityId?: string) => void;
   likePost: (postId: string, userId: string) => void;
   addComment: (postId: string, userId: string, content: string) => void;
   repost: (postId: string, userId: string) => void;
@@ -85,7 +85,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   };
 
-  const addPost = (content: string, image?: string, video?: string) => {
+  const addPost = (content: string, image?: string, video?: string, communityId?: string) => {
     const currentUser = localStorage.getItem('currentUser');
     if (!currentUser) return;
     
@@ -100,7 +100,8 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       likes: [],
       comments: [],
       reposts: [],
-      views: 0
+      views: 0,
+      communityId
     };
 
     const updatedPosts = [newPost, ...posts];

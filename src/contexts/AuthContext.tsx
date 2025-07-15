@@ -14,6 +14,7 @@ interface AuthUser extends User {
 
 interface AuthContextType {
   user: AuthUser | null;
+  currentUser: AuthUser | null;
   login: (email: string, password: string) => boolean;
   register: (email: string, password: string, username: string, name: string, avatar: string) => boolean;
   logout: () => void;
@@ -21,6 +22,7 @@ interface AuthContextType {
   deleteAccount: (password: string) => boolean;
   followUser: (userId: string) => void;
   unfollowUser: (userId: string) => void;
+  getUserById: (id: string) => AuthUser | undefined;
   users: AuthUser[];
 }
 
@@ -162,9 +164,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('allUsers', JSON.stringify(updatedUsers));
   };
 
+  const getUserById = (id: string) => {
+    return users.find(u => u.id === id);
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
+      currentUser: user,
       login,
       register,
       logout,
@@ -172,6 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       deleteAccount,
       followUser,
       unfollowUser,
+      getUserById,
       users
     }}>
       {children}

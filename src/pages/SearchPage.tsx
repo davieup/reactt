@@ -1,36 +1,45 @@
 import { useState } from 'react';
-import { Search, X, TrendingUp } from 'lucide-react';
+import { Search, X, TrendingUp, Users, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BottomNav } from '@/components/BottomNav';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePosts } from '@/contexts/PostContext';
-import { User } from '@/types';
+import { useCommunities } from '@/contexts/CommunityContext';
+import { User, Community } from '@/types';
+import { CreateCommunityDialog } from '@/components/CreateCommunityDialog';
 
 export function SearchPage() {
   const { users } = useAuth();
   const { getTrendingHashtags } = usePosts();
+  const { communities, searchCommunities } = useCommunities();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [communityResults, setCommunityResults] = useState<Community[]>([]);
+  const [showCreateCommunity, setShowCreateCommunity] = useState(false);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     
     if (query.trim()) {
-      const results = users.filter(user =>
+      const userResults = users.filter(user =>
         user.name.toLowerCase().includes(query.toLowerCase()) ||
         user.username.toLowerCase().includes(query.toLowerCase()) ||
         user.bio?.toLowerCase().includes(query.toLowerCase())
       );
-      setSearchResults(results);
+      const commResults = searchCommunities(query);
+      setSearchResults(userResults);
+      setCommunityResults(commResults);
     } else {
       setSearchResults([]);
+      setCommunityResults([]);
     }
   };
 
   const clearSearch = () => {
     setSearchQuery('');
     setSearchResults([]);
+    setCommunityResults([]);
   };
 
   const trendingHashtags = getTrendingHashtags();
@@ -74,92 +83,196 @@ export function SearchPage() {
       <main className="max-w-md mx-auto px-4 py-4">
         {searchQuery ? (
           /* Search Results */
-          <div>
+          <div className="space-y-6">
             <h2 className="text-lg font-bold text-foreground mb-4">
               Results for "{searchQuery}"
             </h2>
             
-            {searchResults.length > 0 ? (
-              <div className="space-y-3">
-                {searchResults.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center gap-3 p-3 bg-card rounded-xl hover:bg-muted transition-colors cursor-pointer"
-                  >
-                    <img 
-                      src={user.avatar} 
-                      alt={user.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-foreground">{user.name}</span>
-                        {user.verified && (
-                          <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
-                            <span className="text-primary-foreground text-xs">✓</span>
-                          </div>
+            {/* Communities Results */}
+            {communityResults.length > 0 && (
+              <div>
+                <h3 className="text-md font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <Users size={16} />
+                  Comunidades
+                </h3>
+                <div className="space-y-3">
+                  {communityResults.map((community) => (
+                    <div
+                      key={community.id}
+                      onClick={() => navigate(`/community/${community.id}`)}
+                      className="flex items-center gap-3 p-3 bg-card rounded-xl hover:bg-muted transition-colors cursor-pointer"
+                    >
+                      <img 
+                        src={community.avatar} 
+                        alt={community.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold text-foreground">{community.name}</p>
+                        <p className="text-text-muted text-sm">{community.followers.length} seguidores</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {community.hashtags.slice(0, 2).map((hashtag) => (
+                            <span key={hashtag} className="text-xs text-text-secondary bg-muted px-1 rounded">
+                              {hashtag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Users Results */}
+            {searchResults.length > 0 && (
+              <div>
+                <h3 className="text-md font-semibold text-foreground mb-3">Pessoas</h3>
+                <div className="space-y-3">
+                  {searchResults.map((user) => (
+                    <div
+                      key={user.id}
+                      className="flex items-center gap-3 p-3 bg-card rounded-xl hover:bg-muted transition-colors cursor-pointer"
+                    >
+                      <img 
+                        src={user.avatar} 
+                        alt={user.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-foreground">{user.name}</span>
+                          {user.verified && (
+                            <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
+                              <span className="text-primary-foreground text-xs">✓</span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-text-muted text-sm">@{user.username}</p>
+                        {user.bio && (
+                          <p className="text-text-secondary text-sm mt-1">{user.bio}</p>
                         )}
                       </div>
-                      <p className="text-text-muted text-sm">@{user.username}</p>
-                      {user.bio && (
-                        <p className="text-text-secondary text-sm mt-1">{user.bio}</p>
-                      )}
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            ) : (
+            )}
+            
+            {searchResults.length === 0 && communityResults.length === 0 && (
               <div className="text-center py-8">
                 <p className="text-text-muted">No results found</p>
               </div>
             )}
           </div>
         ) : (
-          /* Trending Topics */
-          <div>
-            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-              <TrendingUp size={20} />
-              Trending
-            </h2>
-            
-            {trendingHashtags.length > 0 ? (
-              <div className="space-y-2">
-                {trendingHashtags.map((trend, index) => (
-                  <button
-                    key={trend.hashtag}
-                    onClick={() => handleTrendClick(trend.hashtag)}
-                    className="block w-full text-left p-3 bg-card rounded-xl hover:bg-muted transition-colors group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {trend.hashtag}
-                        </p>
-                        <p className="text-text-muted text-sm">
-                          {trend.count} post{trend.count !== 1 ? 's' : ''}
-                        </p>
+          /* Trending Topics and Communities */
+          <div className="space-y-6">
+            {/* Trending Section */}
+            <div>
+              <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                <TrendingUp size={20} />
+                Trending
+              </h2>
+              
+              {trendingHashtags.length > 0 ? (
+                <div className="space-y-2">
+                  {trendingHashtags.map((trend, index) => (
+                    <button
+                      key={trend.hashtag}
+                      onClick={() => handleTrendClick(trend.hashtag)}
+                      className="block w-full text-left p-3 bg-card rounded-xl hover:bg-muted transition-colors group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {trend.hashtag}
+                          </p>
+                          <p className="text-text-muted text-sm">
+                            {trend.count} post{trend.count !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <span className="text-text-muted text-sm">
+                          #{index + 1} trending
+                        </span>
                       </div>
-                      <span className="text-text-muted text-sm">
-                        #{index + 1} trending
-                      </span>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <TrendingUp size={48} className="text-text-muted mx-auto mb-4 opacity-50" />
+                  <p className="text-text-muted">Nenhuma trend no momento</p>
+                  <p className="text-text-muted text-sm mt-2">
+                    Use hashtags nos seus posts para criar trends!
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Communities Section */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Users size={20} />
+                  Comunidades
+                </h2>
+                <button
+                  onClick={() => setShowCreateCommunity(true)}
+                  className="flex items-center gap-1 px-3 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors"
+                >
+                  <Plus size={16} />
+                  Criar
+                </button>
               </div>
-            ) : (
-              <div className="text-center py-8">
-                <TrendingUp size={48} className="text-text-muted mx-auto mb-4 opacity-50" />
-                <p className="text-text-muted">Nenhuma trend no momento</p>
-                <p className="text-text-muted text-sm mt-2">
-                  Use hashtags nos seus posts para criar trends!
-                </p>
-              </div>
-            )}
+              
+              {communities.length > 0 ? (
+                <div className="space-y-2">
+                  {communities.slice(0, 5).map((community) => (
+                    <button
+                      key={community.id}
+                      onClick={() => navigate(`/community/${community.id}`)}
+                      className="block w-full text-left p-3 bg-card rounded-xl hover:bg-muted transition-colors group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <img 
+                          src={community.avatar} 
+                          alt={community.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                        <div className="flex-1">
+                          <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {community.name}
+                          </p>
+                          <p className="text-text-muted text-sm">
+                            {community.followers.length} seguidores
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Users size={48} className="text-text-muted mx-auto mb-4 opacity-50" />
+                  <p className="text-text-muted">Nenhuma comunidade ainda</p>
+                  <p className="text-text-muted text-sm mt-2">
+                    Crie a primeira comunidade!
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
 
       <BottomNav />
+      
+      {/* Create Community Dialog */}
+      <CreateCommunityDialog 
+        isOpen={showCreateCommunity}
+        onClose={() => setShowCreateCommunity(false)}
+      />
     </div>
   );
 }
