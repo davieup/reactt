@@ -5,7 +5,7 @@ import { useCommunities } from '@/contexts/CommunityContext';
 import { usePosts } from '@/contexts/PostContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { PostCard } from '@/components/PostCard';
-import { PostComposer } from '@/components/PostComposer';
+import { Button } from '@/components/ui/button';
 
 export function CommunityPage() {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +13,7 @@ export function CommunityPage() {
   const { getCommunityById, followCommunity, unfollowCommunity } = useCommunities();
   const { posts, addPost } = usePosts();
   const { currentUser, getUserById } = useAuth();
-  const [showComposer, setShowComposer] = useState(false);
+  
 
   const community = id ? getCommunityById(id) : null;
   const creator = community ? getUserById(community.creatorId) : null;
@@ -41,13 +41,6 @@ export function CommunityPage() {
     }
   };
 
-  const handlePost = (content: string, image?: string, video?: string) => {
-    // Add community hashtags to the post content
-    const hashtagsText = community.hashtags.join(' ');
-    const finalContent = `${content}\n\n${hashtagsText}`;
-    addPost(finalContent, image, video, community.id);
-    setShowComposer(false);
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -132,13 +125,13 @@ export function CommunityPage() {
 
           {/* Create Post Button */}
           {isFollowing && (
-            <button
-              onClick={() => setShowComposer(true)}
-              className="w-full flex items-center justify-center gap-2 p-3 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition-colors mb-6"
+            <Button
+              onClick={() => navigate(`/compose?communityId=${id}`)}
+              className="w-full mb-6"
             >
-              <Plus size={20} />
+              <Plus className="w-4 h-4 mr-2" />
               Criar Post na Comunidade
-            </button>
+            </Button>
           )}
         </div>
 
@@ -161,18 +154,6 @@ export function CommunityPage() {
         </div>
       </main>
 
-      {/* Post Composer Modal */}
-      {showComposer && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <PostComposer
-              onPost={handlePost}
-              onCancel={() => setShowComposer(false)}
-              placeholder={`Compartilhe algo com a comunidade ${community.name}...`}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -52,7 +52,7 @@ export function PostComposer({ onPost, onCancel, placeholder = "O que está acon
       if (onPost) {
         onPost(content, image || undefined, video || undefined);
       } else {
-        addPost(content, image || undefined, video || undefined);
+        addPost(user.id, content, image || undefined, video || undefined);
       }
       setContent('');
       setImage(null);

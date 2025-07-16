@@ -5,7 +5,7 @@ import postImage1 from '@/assets/post-image-1.jpg';
 
 interface PostContextType {
   posts: Post[];
-  addPost: (content: string, image?: string, video?: string, communityId?: string) => void;
+  addPost: (userId: string, content: string, image?: string, video?: string, communityId?: string) => void;
   likePost: (postId: string, userId: string) => void;
   addComment: (postId: string, userId: string, content: string, image?: string, video?: string) => void;
   repost: (postId: string, userId: string) => void;
@@ -85,14 +85,10 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   };
 
-  const addPost = (content: string, image?: string, video?: string, communityId?: string) => {
-    const currentUser = localStorage.getItem('currentUser');
-    if (!currentUser) return;
-    
-    const user = JSON.parse(currentUser);
+  const addPost = (userId: string, content: string, image?: string, video?: string, communityId?: string) => {
     const newPost: Post = {
       id: Date.now().toString(),
-      userId: user.id,
+      userId,
       content,
       image,
       video,
@@ -121,12 +117,14 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     savePosts(updatedPosts);
   };
 
-  const addComment = (postId: string, userId: string, content: string) => {
+  const addComment = (postId: string, userId: string, content: string, image?: string, video?: string) => {
     const newComment: Comment = {
       id: Date.now().toString(),
       userId,
       postId,
       content,
+      image,
+      video,
       timestamp: new Date()
     };
 
