@@ -65,8 +65,18 @@ export function PostCard({ post }: PostCardProps) {
     handleView();
   }, []);
 
+  // Function to render text with hashtags
+  const renderContentWithHashtags = (text: string) => {
+    const parts = text.split(/(#\w+)/g);
+    return parts.map((part, index) => 
+      part.startsWith('#') ? 
+        <span key={index} className="hashtag">{part}</span> : 
+        part
+    );
+  };
+
   return (
-    <Card className="border-none border-b border-border last:border-b-0 rounded-none glass-effect">
+    <Card className="post-card border border-border">
       <CardContent className="p-4 space-y-3">
         {post.repostOf && (
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -116,7 +126,7 @@ export function PostCard({ post }: PostCardProps) {
                   </div>
                 </div>
               ) : (
-                <p className="text-foreground leading-relaxed">{post.content}</p>
+                <p className="text-foreground leading-relaxed">{renderContentWithHashtags(post.content)}</p>
               )}
               
               {post.image && (
@@ -148,7 +158,7 @@ export function PostCard({ post }: PostCardProps) {
                 onClick={handleComment}
                 className="text-muted-foreground hover:text-foreground hover:bg-accent group"
               >
-                <MessageCircle className="w-4 h-4 mr-1 group-hover:scale-110 transition-transform" />
+                <MessageCircle className="w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform" />
                 <span className="text-sm">{post.comments.length}</span>
               </Button>
               
@@ -165,7 +175,7 @@ export function PostCard({ post }: PostCardProps) {
                     : 'text-muted-foreground hover:text-green-600 hover:bg-green-600/10'
                 }`}
               >
-                <Repeat2 className="w-4 h-4 mr-1 group-hover:scale-110 transition-transform" />
+                <Repeat2 className="w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform" />
                 <span className="text-sm">{post.reposts.length}</span>
               </Button>
               
@@ -183,7 +193,7 @@ export function PostCard({ post }: PostCardProps) {
                 }`}
               >
                 <Heart 
-                  className={`w-4 h-4 mr-1 group-hover:scale-110 transition-transform ${
+                  className={`w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform ${
                     isLiked ? 'fill-current' : ''
                   }`} 
                 />
@@ -195,7 +205,7 @@ export function PostCard({ post }: PostCardProps) {
                 size="sm"
                 className="text-muted-foreground hover:text-foreground hover:bg-accent group"
               >
-                <Eye className="w-4 h-4 mr-1 group-hover:scale-110 transition-transform" />
+                <Eye className="w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform" />
                 <span className="text-sm">{post.views || 0}</span>
               </Button>
               
@@ -207,7 +217,7 @@ export function PostCard({ post }: PostCardProps) {
                     onClick={(e) => e.stopPropagation()}
                     className="text-muted-foreground hover:text-foreground hover:bg-accent group"
                   >
-                    <MoreHorizontal className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <MoreHorizontal className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">

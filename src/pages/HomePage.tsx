@@ -37,7 +37,7 @@ export function HomePage() {
           </div>
         </header>
         
-        <main>
+        <main className="p-4 space-y-4">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
