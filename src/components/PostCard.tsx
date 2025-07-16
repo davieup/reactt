@@ -65,22 +65,9 @@ export function PostCard({ post }: PostCardProps) {
     handleView();
   }, []);
 
-  const renderContent = (content: string) => {
-    return content.split(/(\s+)/).map((word, index) => {
-      if (word.startsWith('#')) {
-        return (
-          <span key={index} className="hashtag">
-            {word}
-          </span>
-        );
-      }
-      return word;
-    });
-  };
-
   return (
-    <Card className="post-card border border-border mb-4 mx-4 smooth-transition">
-      <CardContent className="p-6 space-y-4">
+    <Card className="border-none border-b border-border last:border-b-0 rounded-none glass-effect">
+      <CardContent className="p-4 space-y-3">
         {post.repostOf && (
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <Repeat2 className="w-4 h-4" />
@@ -88,18 +75,18 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         )}
         
-        <div className="flex space-x-4">
-          <Avatar className="h-12 w-12 cursor-pointer hover:opacity-80 transition-opacity">
+        <div className="flex space-x-3">
+          <Avatar className="h-10 w-10">
             <AvatarImage src={postUser.avatar} />
             <AvatarFallback>{postUser.name.charAt(0)}</AvatarFallback>
           </Avatar>
           
-          <div className="flex-1 space-y-3">
+          <div className="flex-1 space-y-2">
             <div className="flex items-center space-x-2">
-              <h3 className="font-bold text-foreground text-lg">{postUser.name}</h3>
-              <span className="text-muted-foreground text-base">@{postUser.username}</span>
+              <h3 className="font-semibold text-foreground">{postUser.name}</h3>
+              <span className="text-muted-foreground">@{postUser.username}</span>
               {postUser.verified && (
-                <Check className="w-5 h-5 text-primary" />
+                <Check className="w-4 h-4 text-blue-500" />
               )}
               <span className="text-muted-foreground">·</span>
               <span className="text-muted-foreground text-sm">
@@ -109,19 +96,19 @@ export function PostCard({ post }: PostCardProps) {
             
             {community && (
               <div className="flex items-center space-x-2">
-                <span className="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full font-medium">
+                <span className="text-xs bg-muted px-2 py-1 rounded-full text-muted-foreground">
                   📍 {community.name}
                 </span>
               </div>
             )}
             
-            <div className="space-y-4 cursor-pointer" onClick={handleComment}>
+            <div className="space-y-2" onClick={handleComment}>
               {isEditing ? (
-                <div className="space-y-3" onClick={(e) => e.stopPropagation()}>
+                <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
                   <Textarea
                     value={editContent}
                     onChange={(e) => setEditContent(e.target.value)}
-                    className="min-h-[100px] text-lg"
+                    className="min-h-[80px]"
                   />
                   <div className="flex space-x-2">
                     <Button size="sm" onClick={handleEdit}>Salvar</Button>
@@ -129,13 +116,11 @@ export function PostCard({ post }: PostCardProps) {
                   </div>
                 </div>
               ) : (
-                <p className="text-foreground leading-relaxed text-lg">
-                  {renderContent(post.content)}
-                </p>
+                <p className="text-foreground leading-relaxed">{post.content}</p>
               )}
               
               {post.image && (
-                <div className="rounded-2xl overflow-hidden">
+                <div className="rounded-2xl overflow-hidden bg-secondary">
                   <img 
                     src={post.image} 
                     alt="Post content" 
@@ -145,7 +130,7 @@ export function PostCard({ post }: PostCardProps) {
               )}
 
               {post.video && (
-                <div className="rounded-2xl overflow-hidden">
+                <div className="rounded-2xl overflow-hidden bg-secondary">
                   <video 
                     src={post.video} 
                     controls
@@ -156,25 +141,15 @@ export function PostCard({ post }: PostCardProps) {
               )}
             </div>
             
-            {/* Engagement Stats */}
-            <div className="flex items-center space-x-6 text-sm text-muted-foreground py-2">
-              <span>{post.views || 0} visualizações</span>
-              <span>•</span>
-              <span>{post.likes.length} curtidas</span>
-              <span>•</span>
-              <span>{post.comments.length} comentários</span>
-            </div>
-            
-            {/* Action Buttons */}
-            <div className="flex items-center justify-between pt-3 border-t border-border">
+            <div className="flex items-center justify-between pt-2 max-w-md">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleComment}
-                className="flex-1 text-muted-foreground hover:text-primary hover:bg-primary/10 group smooth-transition"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent group"
               >
-                <MessageCircle className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                <span>Comentar</span>
+                <MessageCircle className="w-4 h-4 mr-1 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">{post.comments.length}</span>
               </Button>
               
               <Button
@@ -184,14 +159,14 @@ export function PostCard({ post }: PostCardProps) {
                   e.stopPropagation();
                   handleRepost();
                 }}
-                className={`flex-1 group smooth-transition ${
+                className={`group transition-colors ${
                   isReposted 
                     ? 'text-green-600 hover:text-green-700 hover:bg-green-600/10' 
                     : 'text-muted-foreground hover:text-green-600 hover:bg-green-600/10'
                 }`}
               >
-                <Repeat2 className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                <span>Repostar</span>
+                <Repeat2 className="w-4 h-4 mr-1 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">{post.reposts.length}</span>
               </Button>
               
               <Button
@@ -201,18 +176,27 @@ export function PostCard({ post }: PostCardProps) {
                   e.stopPropagation();
                   handleLike();
                 }}
-                className={`flex-1 group smooth-transition ${
+                className={`group transition-colors ${
                   isLiked 
                     ? 'text-red-500 hover:text-red-600 hover:bg-red-600/10' 
                     : 'text-muted-foreground hover:text-red-500 hover:bg-red-500/10'
                 }`}
               >
                 <Heart 
-                  className={`w-5 h-5 mr-2 group-hover:scale-110 transition-transform ${
+                  className={`w-4 h-4 mr-1 group-hover:scale-110 transition-transform ${
                     isLiked ? 'fill-current' : ''
                   }`} 
                 />
-                <span>Curtir</span>
+                <span className="text-sm">{post.likes.length}</span>
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent group"
+              >
+                <Eye className="w-4 h-4 mr-1 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">{post.views || 0}</span>
               </Button>
               
               <DropdownMenu>
@@ -221,9 +205,9 @@ export function PostCard({ post }: PostCardProps) {
                     variant="ghost"
                     size="sm"
                     onClick={(e) => e.stopPropagation()}
-                    className="text-muted-foreground hover:text-foreground hover:bg-accent group smooth-transition"
+                    className="text-muted-foreground hover:text-foreground hover:bg-accent group"
                   >
-                    <MoreHorizontal className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                    <MoreHorizontal className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">

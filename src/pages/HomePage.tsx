@@ -37,12 +37,10 @@ export function HomePage() {
           </div>
         </header>
         
-        <main className="pb-20">
-          <div className="space-y-0">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+        <main>
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
         </main>
       </div>
       
