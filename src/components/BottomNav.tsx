@@ -14,7 +14,7 @@ export function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 glass-effect border-t border-border z-50">
-      <div className="flex items-center justify-around py-2 max-w-md mx-auto">
+      <div className="flex items-center justify-around py-3 max-w-2xl mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -23,15 +23,15 @@ export function BottomNav() {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-all duration-200 ${
+              className={`flex flex-col items-center gap-2 px-6 py-3 rounded-xl smooth-transition ${
                 isActive 
-                  ? 'text-primary bg-primary/10' 
-                  : 'text-text-muted hover:text-foreground hover:bg-muted'
+                  ? 'text-primary bg-primary/10 scale-105' 
+                  : 'text-muted-foreground hover:text-foreground hover:bg-muted hover:scale-105'
               }`}
             >
               <Icon 
-                size={24} 
-                className={isActive ? 'fill-current' : ''} 
+                size={22} 
+                className={`smooth-transition ${isActive ? 'fill-current' : ''}`} 
               />
               <span className="text-xs font-medium">{item.label}</span>
             </button>

@@ -7,7 +7,7 @@ interface PostContextType {
   posts: Post[];
   addPost: (content: string, image?: string, video?: string, communityId?: string) => void;
   likePost: (postId: string, userId: string) => void;
-  addComment: (postId: string, userId: string, content: string) => void;
+  addComment: (postId: string, userId: string, content: string, image?: string, video?: string) => void;
   repost: (postId: string, userId: string) => void;
   deletePost: (postId: string) => void;
   editPost: (postId: string, content: string) => void;
