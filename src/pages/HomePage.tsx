@@ -26,18 +26,18 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto">
-        <header className="sticky top-0 glass-effect border-b border-border p-4 z-10 flex justify-between items-center">
-          <h1 className="text-xl font-bold">React</h1>
+      <div className="max-w-full mx-auto">
+        <header className="sticky top-0 glass-effect border-b border-border px-4 py-3 z-10 flex justify-between items-center">
+          <h1 className="text-lg font-bold">React</h1>
           <div className="flex items-center space-x-2">
             <NotificationBell />
             <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </header>
         
-        <main className="p-4 space-y-4">
+        <main className="divide-y divide-border">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

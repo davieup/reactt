@@ -6,7 +6,6 @@ import { usePosts } from '@/contexts/PostContext';
 import { useCommunities } from '@/contexts/CommunityContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Heart, MessageCircle, Repeat2, MoreHorizontal, Check, Eye, Edit, Trash2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Textarea } from '@/components/ui/textarea';
@@ -29,7 +28,6 @@ export function PostCard({ post }: PostCardProps) {
   if (!postUser) return null;
 
   const community = post.communityId ? getCommunityById(post.communityId) : null;
-  const originalPost = post.repostOf ? users.find(u => u.id === post.repostOf) : null;
   const isLiked = post.likes.includes(user.id);
   const isReposted = post.reposts.includes(user.id);
 
@@ -60,12 +58,10 @@ export function PostCard({ post }: PostCardProps) {
     viewPost(post.id);
   };
 
-  // Increment views when component mounts
   React.useEffect(() => {
     handleView();
   }, []);
 
-  // Function to render text with hashtags
   const renderContentWithHashtags = (text: string) => {
     const parts = text.split(/(#\w+)/g);
     return parts.map((part, index) => 
@@ -76,176 +72,168 @@ export function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <Card className="post-card border border-border">
-      <CardContent className="p-4 space-y-3">
-        {post.repostOf && (
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Repeat2 className="w-4 h-4" />
-            <span>{postUser.name} repostou</span>
-          </div>
-        )}
+    <div className="px-4 py-3 hover:bg-muted/50 transition-colors cursor-pointer border-b border-border" onClick={handleView}>
+      {post.repostOf && (
+        <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-2 ml-10">
+          <Repeat2 className="w-3 h-3" />
+          <span>{postUser.name} repostou</span>
+        </div>
+      )}
+      
+      <div className="flex space-x-3">
+        <Avatar className="h-10 w-10 flex-shrink-0">
+          <AvatarImage src={postUser.avatar} />
+          <AvatarFallback>{postUser.name.charAt(0)}</AvatarFallback>
+        </Avatar>
         
-        <div className="flex space-x-3">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={postUser.avatar} />
-            <AvatarFallback>{postUser.name.charAt(0)}</AvatarFallback>
-          </Avatar>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center space-x-1 mb-1">
+            <span className="font-semibold text-foreground text-sm">{postUser.name}</span>
+            <span className="text-muted-foreground text-sm">@{postUser.username}</span>
+            {postUser.verified && (
+              <Check className="w-3 h-3 text-blue-500" />
+            )}
+            <span className="text-muted-foreground text-sm">·</span>
+            <span className="text-muted-foreground text-sm">
+              {post.timestamp.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}
+            </span>
+          </div>
           
-          <div className="flex-1 space-y-2">
-            <div className="flex items-center space-x-2">
-              <h3 className="font-semibold text-foreground">{postUser.name}</h3>
-              <span className="text-muted-foreground">@{postUser.username}</span>
-              {postUser.verified && (
-                <Check className="w-4 h-4 text-blue-500" />
-              )}
-              <span className="text-muted-foreground">·</span>
-              <span className="text-muted-foreground text-sm">
-                {post.timestamp.toLocaleDateString('pt-BR')}
+          {community && (
+            <div className="flex items-center space-x-1 mb-1">
+              <span className="text-xs text-muted-foreground">
+                {community.name}
               </span>
             </div>
-            
-            {community && (
-              <div className="flex items-center space-x-2">
-                <span className="text-xs bg-muted px-2 py-1 rounded-full text-muted-foreground">
-                  📍 {community.name}
-                </span>
+          )}
+          
+          <div className="space-y-2">
+            {isEditing ? (
+              <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                <Textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="min-h-[80px] text-sm"
+                />
+                <div className="flex space-x-2">
+                  <Button size="sm" onClick={handleEdit}>Salvar</Button>
+                  <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancelar</Button>
+                </div>
               </div>
+            ) : (
+              <p className="text-foreground text-sm leading-relaxed">{renderContentWithHashtags(post.content)}</p>
             )}
             
-            <div className="space-y-2" onClick={handleComment}>
-              {isEditing ? (
-                <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
-                  <Textarea
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    className="min-h-[80px]"
-                  />
-                  <div className="flex space-x-2">
-                    <Button size="sm" onClick={handleEdit}>Salvar</Button>
-                    <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancelar</Button>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-foreground leading-relaxed">{renderContentWithHashtags(post.content)}</p>
-              )}
-              
-              {post.image && (
-                <div className="rounded-2xl overflow-hidden bg-secondary">
-                  <img 
-                    src={post.image} 
-                    alt="Post content" 
-                    className="w-full max-h-96 object-cover"
-                  />
-                </div>
-              )}
-
-              {post.video && (
-                <div className="rounded-2xl overflow-hidden bg-secondary">
-                  <video 
-                    src={post.video} 
-                    controls
-                    className="w-full max-h-96"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </div>
-              )}
-            </div>
-            
-            <div className="flex items-center justify-between pt-2 max-w-md">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleComment}
-                className="text-muted-foreground hover:text-foreground hover:bg-accent group"
-              >
-                <MessageCircle className="w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform" />
-                <span className="text-sm">{post.comments.length}</span>
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRepost();
-                }}
-                className={`group transition-colors ${
-                  isReposted 
-                    ? 'text-green-600 hover:text-green-700 hover:bg-green-600/10' 
-                    : 'text-muted-foreground hover:text-green-600 hover:bg-green-600/10'
-                }`}
-              >
-                <Repeat2 className="w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform" />
-                <span className="text-sm">{post.reposts.length}</span>
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLike();
-                }}
-                className={`group transition-colors ${
-                  isLiked 
-                    ? 'text-red-500 hover:text-red-600 hover:bg-red-600/10' 
-                    : 'text-muted-foreground hover:text-red-500 hover:bg-red-500/10'
-                }`}
-              >
-                <Heart 
-                  className={`w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform ${
-                    isLiked ? 'fill-current' : ''
-                  }`} 
+            {post.image && (
+              <div className="rounded-2xl overflow-hidden border mt-3">
+                <img 
+                  src={post.image} 
+                  alt="Post content" 
+                  className="w-full max-h-80 object-cover"
                 />
-                <span className="text-sm">{post.likes.length}</span>
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground hover:text-foreground hover:bg-accent group"
-              >
-                <Eye className="w-3.5 h-3.5 mr-1 group-hover:scale-110 transition-transform" />
-                <span className="text-sm">{post.views || 0}</span>
-              </Button>
-              
+              </div>
+            )}
+
+            {post.video && (
+              <div className="rounded-2xl overflow-hidden border mt-3">
+                <video 
+                  src={post.video} 
+                  controls
+                  className="w-full max-h-80"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
+          </div>
+          
+          <div className="flex items-center justify-between mt-3 max-w-md">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleComment();
+              }}
+              className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-2"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span className="text-xs">{post.comments.length}</span>
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRepost();
+              }}
+              className="flex items-center space-x-1 text-muted-foreground hover:text-green-500 hover:bg-green-500/10 rounded-full p-2"
+            >
+              <Repeat2 className="w-4 h-4" />
+              <span className="text-xs">{post.reposts.length}</span>
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleLike();
+              }}
+              className={`flex items-center space-x-1 rounded-full p-2 ${
+                isLiked 
+                  ? 'text-red-500 hover:text-red-600 hover:bg-red-500/10' 
+                  : 'text-muted-foreground hover:text-red-500 hover:bg-red-500/10'
+              }`}
+            >
+              <Heart className={`w-4 h-4 ${
+                isLiked ? 'fill-current' : ''
+              }`} />
+              <span className="text-xs">{post.likes.length}</span>
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-2"
+            >
+              <Eye className="w-4 h-4" />
+              <span className="text-xs">{post.views || 0}</span>
+            </Button>
+
+            {post.userId === user.id && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={(e) => e.stopPropagation()}
-                    className="text-muted-foreground hover:text-foreground hover:bg-accent group"
+                    className="text-muted-foreground hover:text-foreground hover:bg-muted/10 rounded-full p-2"
                   >
-                    <MoreHorizontal className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+                    <MoreHorizontal className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  {post.userId === user.id && (
-                    <>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        setIsEditing(true);
-                      }}>
-                        <Edit className="w-4 h-4 mr-2" />
-                        Editar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete();
-                      }} className="text-destructive">
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Deletar
-                      </DropdownMenuItem>
-                    </>
-                  )}
+                  <DropdownMenuItem onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditing(true);
+                  }}>
+                    <Edit className="w-3 h-3 mr-2" />
+                    Editar
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete();
+                  }} className="text-destructive">
+                    <Trash2 className="w-3 h-3 mr-2" />
+                    Deletar
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </div>
-
+            )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
