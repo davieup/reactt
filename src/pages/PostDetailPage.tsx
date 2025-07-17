@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Heart, MessageCircle, Repeat2, Eye, Send, Image, Video, Trash2, Edit } from 'lucide-react';
+import { ArrowLeft, Heart, MessageCircle, Repeat2, Eye, Send, Image, Video, Trash2, Edit, MoreHorizontal } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
