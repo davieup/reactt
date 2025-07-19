@@ -28,7 +28,7 @@ export function HomePage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-full mx-auto">
         <header className="sticky top-0 glass-effect border-b border-border px-4 py-3 z-10 flex justify-between items-center">
-          <h1 className="text-lg font-bold">React</h1>
+          <h1 className="text-lg font-bold">Reactt</h1>
           <div className="flex items-center space-x-2">
             <NotificationBell />
             <Button variant="ghost" size="icon" onClick={handleLogout}>

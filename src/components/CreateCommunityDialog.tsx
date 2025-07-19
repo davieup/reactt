@@ -75,21 +75,21 @@ export function CreateCommunityDialog({ isOpen, onClose }: CreateCommunityDialog
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-card rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="text-xl font-bold text-foreground">Criar Comunidade</h2>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-muted rounded-full transition-colors"
-          >
-            <X size={20} className="text-text-muted" />
-          </button>
-        </div>
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h2 className="text-xl font-bold text-foreground">Create Community</h2>
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-muted rounded-full transition-colors"
+            >
+              <X size={20} className="text-text-muted" />
+            </button>
+          </div>
 
         <div className="p-4 space-y-6">
           {/* Cover Image */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              Foto de Capa
+              Cover Photo
             </label>
             <div className="relative">
               {coverImage ? (
@@ -107,9 +107,9 @@ export function CreateCommunityDialog({ isOpen, onClose }: CreateCommunityDialog
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
-                  <ImageIcon size={24} className="text-text-muted mb-2" />
-                  <span className="text-sm text-text-muted">Adicionar foto de capa</span>
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-xl cursor-pointer hover:bg-muted/50 transition-colors">
+                    <ImageIcon size={24} className="text-text-muted mb-2" />
+                    <span className="text-sm text-text-muted">Add cover photo</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -124,7 +124,7 @@ export function CreateCommunityDialog({ isOpen, onClose }: CreateCommunityDialog
           {/* Avatar */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              Foto da Comunidade
+              Community Photo
             </label>
             <div className="flex items-center gap-4">
               {avatar ? (
@@ -154,7 +154,7 @@ export function CreateCommunityDialog({ isOpen, onClose }: CreateCommunityDialog
               )}
               <div className="flex-1">
                 <p className="text-sm text-text-muted">
-                  Adicione uma foto para representar sua comunidade
+                  Add a photo to represent your community
                 </p>
               </div>
             </div>
@@ -163,13 +163,13 @@ export function CreateCommunityDialog({ isOpen, onClose }: CreateCommunityDialog
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-foreground mb-2">
-              Nome da Comunidade
+              Community Name
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Digite o nome da comunidade..."
+              placeholder="Enter community name..."
               className="w-full px-3 py-2 bg-muted rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder-text-muted"
               maxLength={50}
             />
@@ -179,10 +179,10 @@ export function CreateCommunityDialog({ isOpen, onClose }: CreateCommunityDialog
           <div>
             <label className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2">
               <Hash size={16} />
-              Temas da Comunidade
+              Community Topics
             </label>
             <p className="text-sm text-text-muted mb-3">
-              Selecione as hashtags que representam sua comunidade
+              Select hashtags that represent your community
             </p>
             <div className="flex flex-wrap gap-2">
               {trendingHashtags.map((trend) => (
@@ -201,19 +201,19 @@ export function CreateCommunityDialog({ isOpen, onClose }: CreateCommunityDialog
             </div>
             {selectedHashtags.length === 0 && (
               <p className="text-sm text-red-500 mt-2">
-                Selecione pelo menos uma hashtag
+                Select at least one hashtag
               </p>
             )}
           </div>
 
           {/* Create Button */}
-          <button
-            onClick={handleCreate}
-            disabled={!name.trim() || selectedHashtags.length === 0 || isCreating}
-            className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isCreating ? 'Criando...' : 'Criar Comunidade'}
-          </button>
+            <button
+              onClick={handleCreate}
+              disabled={!name.trim() || selectedHashtags.length === 0 || isCreating}
+              className="w-full bg-primary text-primary-foreground py-3 rounded-xl font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isCreating ? 'Creating...' : 'Create Community'}
+            </button>
         </div>
       </div>
     </div>

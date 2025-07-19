@@ -4,6 +4,8 @@ import { Community } from '@/types';
 interface CommunityContextType {
   communities: Community[];
   createCommunity: (name: string, avatar: string, coverImage: string, hashtags: string[]) => void;
+  updateCommunity: (communityId: string, updates: Partial<Community>) => void;
+  deleteCommunity: (communityId: string) => void;
   followCommunity: (communityId: string, userId: string) => void;
   unfollowCommunity: (communityId: string, userId: string) => void;
   getCommunityById: (id: string) => Community | undefined;
@@ -53,6 +55,21 @@ export function CommunityProvider({ children }: { children: React.ReactNode }) {
     saveCommunities(updatedCommunities);
   };
 
+  const updateCommunity = (communityId: string, updates: Partial<Community>) => {
+    const updatedCommunities = communities.map(community => {
+      if (community.id === communityId) {
+        return { ...community, ...updates };
+      }
+      return community;
+    });
+    saveCommunities(updatedCommunities);
+  };
+
+  const deleteCommunity = (communityId: string) => {
+    const updatedCommunities = communities.filter(community => community.id !== communityId);
+    saveCommunities(updatedCommunities);
+  };
+
   const followCommunity = (communityId: string, userId: string) => {
     const updatedCommunities = communities.map(community => {
       if (community.id === communityId && !community.followers.includes(userId)) {
@@ -92,6 +109,8 @@ export function CommunityProvider({ children }: { children: React.ReactNode }) {
     <CommunityContext.Provider value={{
       communities,
       createCommunity,
+      updateCommunity,
+      deleteCommunity,
       followCommunity,
       unfollowCommunity,
       getCommunityById,

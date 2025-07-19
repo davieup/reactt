@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,12 +8,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Camera, ArrowLeft, Trash2 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Camera, ArrowLeft, Trash2, Moon, Sun } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export function SettingsPage() {
   const { user, updateProfile, deleteAccount, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   
   const [name, setName] = useState(user?.name || '');
@@ -49,7 +52,7 @@ export function SettingsPage() {
       setDeleteDialogOpen(false);
       navigate('/login');
     } else {
-      setError('Senha incorreta');
+      setError('Incorrect password');
     }
   };
 
@@ -69,15 +72,15 @@ export function SettingsPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-2xl font-bold">Configurações</h1>
+          <h1 className="text-2xl font-bold">Settings</h1>
         </div>
 
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Perfil</CardTitle>
+              <CardTitle>Profile</CardTitle>
               <CardDescription>
-                Atualize suas informações pessoais
+                Update your personal information
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -97,13 +100,13 @@ export function SettingsPage() {
                   />
                 </div>
                 <p className="text-sm text-muted-foreground text-center">
-                  Clique para alterar foto de perfil
+                  Click to change profile picture
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nome</Label>
+                  <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
                     value={name}
@@ -112,12 +115,12 @@ export function SettingsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="bio">Biografia</Label>
+                  <Label htmlFor="bio">Bio</Label>
                   <Textarea
                     id="bio"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    placeholder="Conte um pouco sobre você..."
+                    placeholder="Tell us about yourself..."
                     rows={3}
                   />
                 </div>
@@ -128,22 +131,46 @@ export function SettingsPage() {
                     id="link"
                     value={profileLink}
                     onChange={(e) => setProfileLink(e.target.value)}
-                    placeholder="https://seusite.com"
+                    placeholder="https://yoursite.com"
                   />
                 </div>
               </div>
 
               <Button onClick={handleSave} className="w-full">
-                Salvar Alterações
+                Save Changes
               </Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-destructive">Zona de Perigo</CardTitle>
+              <CardTitle>Appearance</CardTitle>
               <CardDescription>
-                Ações irreversíveis da sua conta
+                Customize the appearance of the app
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Theme</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Switch between light and dark mode
+                  </p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Sun className="h-4 w-4" />
+                  <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} />
+                  <Moon className="h-4 w-4" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardDescription>
+                Irreversible actions for your account
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -152,42 +179,42 @@ export function SettingsPage() {
                 onClick={logout}
                 className="w-full"
               >
-                Sair da Conta
+                Sign Out
               </Button>
 
               <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="destructive" className="w-full">
                     <Trash2 className="w-4 h-4 mr-2" />
-                    Apagar Conta
+                    Delete Account
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Apagar Conta</DialogTitle>
+                    <DialogTitle>Delete Account</DialogTitle>
                     <DialogDescription>
-                      Esta ação não pode ser desfeita. Todos os seus dados serão permanentemente removidos.
+                      This action cannot be undone. All your data will be permanently removed.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="delete-password">Confirme sua senha</Label>
+                      <Label htmlFor="delete-password">Confirm your password</Label>
                       <Input
                         id="delete-password"
                         type="password"
                         value={deletePassword}
                         onChange={(e) => setDeletePassword(e.target.value)}
-                        placeholder="Digite sua senha"
+                        placeholder="Enter your password"
                       />
                     </div>
                     {error && <p className="text-destructive text-sm">{error}</p>}
                   </div>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-                      Cancelar
+                      Cancel
                     </Button>
                     <Button variant="destructive" onClick={handleDeleteAccount}>
-                      Apagar Conta
+                      Delete Account
                     </Button>
                   </DialogFooter>
                 </DialogContent>
