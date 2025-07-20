@@ -6,7 +6,7 @@ import { usePosts } from '@/contexts/PostContext';
 import { useCommunities } from '@/contexts/CommunityContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Repeat2, MoreHorizontal, Check, Eye, Edit, Trash2 } from 'lucide-react';
+import { Heart, MessageCircle, Repeat2, MoreHorizontal, Check, Eye, Edit, Trash2, Users } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -67,6 +67,13 @@ export function PostCard({ post }: PostCardProps) {
     }
   };
 
+  const handleCommunityClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (community) {
+      navigate(`/community/${community.id}`);
+    }
+  };
+
   React.useEffect(() => {
     handleView();
   }, []);
@@ -99,25 +106,28 @@ export function PostCard({ post }: PostCardProps) {
         </Avatar>
         
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-1 mb-1">
-            <span className="font-semibold text-foreground text-sm">{postUser.name}</span>
-            <span className="text-muted-foreground text-sm">@{postUser.username}</span>
-            {postUser.verified && (
-              <Check className="w-3 h-3 text-blue-500" />
-            )}
-            <span className="text-muted-foreground text-sm">·</span>
-            <span className="text-muted-foreground text-sm">
-              {post.timestamp.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}
-            </span>
-          </div>
-          
-          {community && (
-            <div className="flex items-center space-x-1 mb-1">
-              <span className="text-xs text-muted-foreground">
-                {community.name}
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center space-x-1">
+              <span className="font-semibold text-foreground text-sm">{postUser.name}</span>
+              <span className="text-muted-foreground text-sm">@{postUser.username}</span>
+              {postUser.verified && (
+                <Check className="w-3 h-3 text-blue-500" />
+              )}
+              <span className="text-muted-foreground text-sm">·</span>
+              <span className="text-muted-foreground text-sm">
+                {post.timestamp.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}
               </span>
             </div>
-          )}
+            {community && (
+              <button 
+                onClick={handleCommunityClick}
+                className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-1 rounded-full"
+              >
+                <Users size={12} />
+                {community.name}
+              </button>
+            )}
+          </div>
           
           <div className="space-y-2">
             {isEditing ? (

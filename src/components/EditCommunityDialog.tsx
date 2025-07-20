@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Upload, Image as ImageIcon, Hash, Trash2 } from 'lucide-react';
+import { X, Upload, Image as ImageIcon, Hash, Trash2, Link, Plus } from 'lucide-react';
 import { useCommunities } from '@/contexts/CommunityContext';
 import { usePosts } from '@/contexts/PostContext';
 import { Community } from '@/types';
@@ -19,6 +19,8 @@ export function EditCommunityDialog({ isOpen, onClose, community }: EditCommunit
   const [avatar, setAvatar] = useState(community.avatar);
   const [coverImage, setCoverImage] = useState(community.coverImage);
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>(community.hashtags);
+  const [bio, setBio] = useState(community.bio || '');
+  const [links, setLinks] = useState<string[]>(community.links?.length ? community.links : ['']);
   const [isUpdating, setIsUpdating] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
@@ -54,6 +56,22 @@ export function EditCommunityDialog({ isOpen, onClose, community }: EditCommunit
     );
   };
 
+  const addLink = () => {
+    if (links.length < 3) {
+      setLinks([...links, '']);
+    }
+  };
+
+  const removeLink = (index: number) => {
+    setLinks(links.filter((_, i) => i !== index));
+  };
+
+  const updateLink = (index: number, value: string) => {
+    const newLinks = [...links];
+    newLinks[index] = value;
+    setLinks(newLinks);
+  };
+
   const handleUpdate = async () => {
     if (!name.trim() || selectedHashtags.length === 0) return;
     
@@ -63,7 +81,9 @@ export function EditCommunityDialog({ isOpen, onClose, community }: EditCommunit
       name,
       avatar,
       coverImage,
-      hashtags: selectedHashtags
+      hashtags: selectedHashtags,
+      bio: bio.trim() || undefined,
+      links: links.filter(link => link.trim())
     });
     
     setIsUpdating(false);
@@ -211,10 +231,67 @@ export function EditCommunityDialog({ isOpen, onClose, community }: EditCommunit
                 <p className="text-sm text-red-500 mt-2">
                   Select at least one hashtag
                 </p>
+            )}
+          </div>
+
+          {/* Bio */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Bio (Optional)
+            </label>
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Describe your community..."
+              className="w-full px-3 py-2 bg-muted rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder-text-muted resize-none"
+              rows={3}
+              maxLength={160}
+            />
+            <p className="text-xs text-text-muted mt-1">{bio.length}/160</p>
+          </div>
+
+          {/* Links */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2">
+              <Link size={16} />
+              Links (Optional)
+            </label>
+            <p className="text-sm text-text-muted mb-3">
+              Add up to 3 links for your community
+            </p>
+            <div className="space-y-2">
+              {links.map((link, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="url"
+                    value={link}
+                    onChange={(e) => updateLink(index, e.target.value)}
+                    placeholder="https://example.com"
+                    className="flex-1 px-3 py-2 bg-muted rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-primary text-foreground placeholder-text-muted"
+                  />
+                  {links.length > 1 && (
+                    <button
+                      onClick={() => removeLink(index)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              ))}
+              {links.length < 3 && (
+                <button
+                  onClick={addLink}
+                  className="flex items-center gap-2 text-primary hover:bg-primary/10 px-3 py-2 rounded-xl transition-colors"
+                >
+                  <Plus size={16} />
+                  Add Link
+                </button>
               )}
             </div>
+          </div>
 
-            {/* Update Button */}
+          {/* Update Button */}
             <button
               onClick={handleUpdate}
               disabled={!name.trim() || selectedHashtags.length === 0 || isUpdating}

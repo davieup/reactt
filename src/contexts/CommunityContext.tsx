@@ -3,7 +3,7 @@ import { Community } from '@/types';
 
 interface CommunityContextType {
   communities: Community[];
-  createCommunity: (name: string, avatar: string, coverImage: string, hashtags: string[]) => void;
+  createCommunity: (name: string, avatar: string, coverImage: string, hashtags: string[], bio?: string, links?: string[]) => void;
   updateCommunity: (communityId: string, updates: Partial<Community>) => void;
   deleteCommunity: (communityId: string) => void;
   followCommunity: (communityId: string, userId: string) => void;
@@ -35,7 +35,7 @@ export function CommunityProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('communities', JSON.stringify(updatedCommunities));
   };
 
-  const createCommunity = (name: string, avatar: string, coverImage: string, hashtags: string[]) => {
+  const createCommunity = (name: string, avatar: string, coverImage: string, hashtags: string[], bio?: string, links?: string[]) => {
     const currentUser = localStorage.getItem('currentUser');
     if (!currentUser) return;
     
@@ -48,7 +48,9 @@ export function CommunityProvider({ children }: { children: React.ReactNode }) {
       hashtags,
       creatorId: user.id,
       followers: [user.id], // Creator automatically follows the community
-      createdAt: new Date()
+      createdAt: new Date(),
+      bio,
+      links: links?.filter(link => link.trim()) || []
     };
 
     const updatedCommunities = [...communities, newCommunity];

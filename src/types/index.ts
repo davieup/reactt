@@ -37,6 +37,8 @@ export interface Community {
   creatorId: string;
   followers: string[];
   createdAt: Date;
+  bio?: string;
+  links?: string[];
 }
 
 export interface Post {
