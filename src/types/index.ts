@@ -15,6 +15,7 @@ export interface Comment {
   image?: string;
   video?: string;
   timestamp: Date;
+  likes?: string[];
 }
 
 export interface Notification {

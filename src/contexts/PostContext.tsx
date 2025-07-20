@@ -14,6 +14,7 @@ interface PostContextType {
   viewPost: (postId: string) => void;
   getTrendingHashtags: () => { hashtag: string; count: number }[];
   getPostsByHashtag: (hashtag: string) => Post[];
+  likeComment: (commentId: string, userId: string) => void;
 }
 
 const defaultPosts: Post[] = [];
@@ -125,7 +126,8 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       content,
       image,
       video,
-      timestamp: new Date()
+      timestamp: new Date(),
+      likes: []
     };
 
     const updatedPosts = posts.map(post => {
@@ -133,6 +135,22 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
         return { ...post, comments: [...post.comments, newComment] };
       }
       return post;
+    });
+    savePosts(updatedPosts);
+  };
+
+  const likeComment = (commentId: string, userId: string) => {
+    const updatedPosts = posts.map(post => {
+      const updatedComments = post.comments.map(comment => {
+        if (comment.id === commentId) {
+          const likes = comment.likes?.includes(userId)
+            ? comment.likes.filter(id => id !== userId)
+            : [...(comment.likes || []), userId];
+          return { ...comment, likes };
+        }
+        return comment;
+      });
+      return { ...post, comments: updatedComments };
     });
     savePosts(updatedPosts);
   };
@@ -216,7 +234,8 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       editPost,
       viewPost,
       getTrendingHashtags,
-      getPostsByHashtag
+      getPostsByHashtag,
+      likeComment
     }}>
       {children}
     </PostContext.Provider>

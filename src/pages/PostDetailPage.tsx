@@ -15,9 +15,9 @@ export function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const { user, users, showDisplayName } = useAuth();
-  const { posts, addComment, likePost, repost, deletePost, editPost } = usePosts();
+  const { posts, addComment, likePost, repost, deletePost, editPost, likeComment } = usePosts();
   const { getCommunityById } = useCommunities();
-  const [commentText, setCommentText] = useState('');
+  
   
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState('');
@@ -67,10 +67,7 @@ export function PostDetailPage() {
   };
 
   const handleComment = () => {
-    if (commentText.trim()) {
-      addComment(post.id, user.id, commentText);
-      setCommentText('');
-    }
+    navigate(`/compose?type=comment&postId=${post.id}`);
   };
 
   const handleDelete = () => {
@@ -264,23 +261,11 @@ export function PostDetailPage() {
           </div>
 
           <div className="border-b border-border px-4 py-3">
-            <div className="flex items-center space-x-3">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 flex space-x-2">
-                <Input
-                  placeholder="Publicar sua resposta"
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleComment()}
-                  className="border-none focus-visible:ring-0 text-sm bg-transparent"
-                />
-                <Button size="sm" onClick={handleComment} className="rounded-full px-4">
-                  Responder
-                </Button>
-              </div>
+            <div className="flex justify-center">
+              <Button onClick={handleComment} className="rounded-full px-6">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Responder
+              </Button>
             </div>
           </div>
           <div className="space-y-0">
@@ -333,6 +318,26 @@ export function PostDetailPage() {
                             />
                           </div>
                         )}
+
+                        <div className="flex items-center mt-3 space-x-4">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => likeComment && likeComment(comment.id, user.id)}
+                            className={`flex items-center space-x-1 rounded-full p-2 ${
+                              comment.likes?.includes(user.id)
+                                ? 'text-red-500 hover:text-red-600 hover:bg-red-500/10' 
+                                : 'text-muted-foreground hover:text-red-500 hover:bg-red-500/10'
+                            }`}
+                          >
+                            <Heart className={`w-4 h-4 ${
+                              comment.likes?.includes(user.id) ? 'fill-current' : ''
+                            }`} />
+                            {comment.likes && comment.likes.length > 0 && (
+                              <span className="text-xs">{comment.likes.length}</span>
+                            )}
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
