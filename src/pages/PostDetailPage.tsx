@@ -32,7 +32,21 @@ export function PostDetailPage() {
     );
   };
 
-  if (!user || !postId) return null;
+  if (!user || !postId) {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-2xl mx-auto">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Voltar
+          </Button>
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const post = posts.find(p => p.id === postId);
   if (!post) {
@@ -52,7 +66,21 @@ export function PostDetailPage() {
   }
 
   const postUser = users.find(u => u.id === post.userId);
-  if (!postUser) return null;
+  if (!postUser) {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-2xl mx-auto">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Voltar
+          </Button>
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Usuário não encontrado</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const community = post.communityId ? getCommunityById(post.communityId) : null;
   const isLiked = post.likes.includes(user.id);

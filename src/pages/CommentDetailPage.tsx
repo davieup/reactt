@@ -24,7 +24,21 @@ export function CommentDetailPage() {
     );
   };
 
-  if (!user || !commentId) return null;
+  if (!user || !commentId) {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-2xl mx-auto">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Voltar
+          </Button>
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Carregando...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const comment = getCommentById(commentId);
   if (!comment) {
@@ -44,7 +58,21 @@ export function CommentDetailPage() {
   }
 
   const commentUser = users.find(u => u.id === comment.userId);
-  if (!commentUser) return null;
+  if (!commentUser) {
+    return (
+      <div className="min-h-screen bg-background p-4">
+        <div className="max-w-2xl mx-auto">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Voltar
+          </Button>
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Usuário não encontrado</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const isLiked = comment.likes?.includes(user.id) || false;
 

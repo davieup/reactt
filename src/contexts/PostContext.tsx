@@ -31,14 +31,19 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     const savedPosts = localStorage.getItem('posts');
     if (savedPosts) {
       const parsedPosts = JSON.parse(savedPosts);
-      // Convert timestamp strings back to Date objects
+      // Convert timestamp strings back to Date objects recursively
+      const convertTimestamps = (comments: any[]): Comment[] => {
+        return comments.map((comment: any) => ({
+          ...comment,
+          timestamp: new Date(comment.timestamp),
+          replies: comment.replies ? convertTimestamps(comment.replies) : []
+        }));
+      };
+
       const postsWithDates = parsedPosts.map((post: any) => ({
         ...post,
         timestamp: new Date(post.timestamp),
-        comments: post.comments.map((comment: any) => ({
-          ...comment,
-          timestamp: new Date(comment.timestamp)
-        }))
+        comments: convertTimestamps(post.comments || [])
       }));
       setPosts(postsWithDates);
     } else {
@@ -121,7 +126,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     savePosts(updatedPosts);
   };
 
-  const addComment = (postId: string, content: string, userId: string, image?: string, video?: string, commentId?: string) => {
+  const addComment = (postId: string, userId: string, content: string, image?: string, video?: string, commentId?: string) => {
     const newComment: Comment = {
       id: Date.now().toString(),
       postId,
