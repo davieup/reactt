@@ -121,10 +121,10 @@ export function PostCard({ post }: PostCardProps) {
             {community && (
               <button 
                 onClick={handleCommunityClick}
-                className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-1 rounded-full"
+                className="p-1 text-primary hover:text-primary/80 transition-colors hover:bg-primary/10 rounded-full"
+                title={community.name}
               >
-                <Users size={12} />
-                {community.name}
+                <Users size={14} />
               </button>
             )}
           </div>
