@@ -16,6 +16,9 @@ export interface Comment {
   video?: string;
   timestamp: Date;
   likes?: string[];
+  parentCommentId?: string;
+  replies?: Comment[];
+  views?: number;
 }
 
 export interface Notification {

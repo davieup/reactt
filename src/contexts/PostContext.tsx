@@ -7,7 +7,7 @@ interface PostContextType {
   posts: Post[];
   addPost: (userId: string, content: string, image?: string, video?: string, communityId?: string) => void;
   likePost: (postId: string, userId: string) => void;
-  addComment: (postId: string, userId: string, content: string, image?: string, video?: string) => void;
+  addComment: (postId: string, userId: string, content: string, image?: string, video?: string, parentCommentId?: string) => void;
   repost: (postId: string, userId: string) => void;
   deletePost: (postId: string) => void;
   editPost: (postId: string, content: string) => void;
@@ -15,6 +15,8 @@ interface PostContextType {
   getTrendingHashtags: () => { hashtag: string; count: number }[];
   getPostsByHashtag: (hashtag: string) => Post[];
   likeComment: (commentId: string, userId: string) => void;
+  getCommentById: (commentId: string) => Comment | null;
+  viewComment: (commentId: string) => void;
 }
 
 const defaultPosts: Post[] = [];
@@ -118,7 +120,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     savePosts(updatedPosts);
   };
 
-  const addComment = (postId: string, userId: string, content: string, image?: string, video?: string) => {
+  const addComment = (postId: string, userId: string, content: string, image?: string, video?: string, parentCommentId?: string) => {
     const newComment: Comment = {
       id: Date.now().toString(),
       userId,
@@ -127,12 +129,32 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       image,
       video,
       timestamp: new Date(),
-      likes: []
+      likes: [],
+      parentCommentId,
+      replies: [],
+      views: 0
     };
 
     const updatedPosts = posts.map(post => {
       if (post.id === postId) {
-        return { ...post, comments: [...post.comments, newComment] };
+        if (parentCommentId) {
+          // Add reply to existing comment
+          const addReplyToComment = (comments: Comment[]): Comment[] => {
+            return comments.map(comment => {
+              if (comment.id === parentCommentId) {
+                return { ...comment, replies: [...(comment.replies || []), newComment] };
+              }
+              if (comment.replies && comment.replies.length > 0) {
+                return { ...comment, replies: addReplyToComment(comment.replies) };
+              }
+              return comment;
+            });
+          };
+          return { ...post, comments: addReplyToComment(post.comments) };
+        } else {
+          // Add top-level comment
+          return { ...post, comments: [...post.comments, newComment] };
+        }
       }
       return post;
     });
@@ -141,16 +163,59 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
 
   const likeComment = (commentId: string, userId: string) => {
     const updatedPosts = posts.map(post => {
-      const updatedComments = post.comments.map(comment => {
-        if (comment.id === commentId) {
-          const likes = comment.likes?.includes(userId)
-            ? comment.likes.filter(id => id !== userId)
-            : [...(comment.likes || []), userId];
-          return { ...comment, likes };
+      const updateCommentLikes = (comments: Comment[]): Comment[] => {
+        return comments.map(comment => {
+          if (comment.id === commentId) {
+            const likes = comment.likes?.includes(userId)
+              ? comment.likes.filter(id => id !== userId)
+              : [...(comment.likes || []), userId];
+            return { ...comment, likes };
+          }
+          if (comment.replies && comment.replies.length > 0) {
+            return { ...comment, replies: updateCommentLikes(comment.replies) };
+          }
+          return comment;
+        });
+      };
+      return { ...post, comments: updateCommentLikes(post.comments) };
+    });
+    savePosts(updatedPosts);
+  };
+
+  const getCommentById = (commentId: string): Comment | null => {
+    for (const post of posts) {
+      const findComment = (comments: Comment[]): Comment | null => {
+        for (const comment of comments) {
+          if (comment.id === commentId) {
+            return comment;
+          }
+          if (comment.replies && comment.replies.length > 0) {
+            const found = findComment(comment.replies);
+            if (found) return found;
+          }
         }
-        return comment;
-      });
-      return { ...post, comments: updatedComments };
+        return null;
+      };
+      const found = findComment(post.comments);
+      if (found) return found;
+    }
+    return null;
+  };
+
+  const viewComment = (commentId: string) => {
+    const updatedPosts = posts.map(post => {
+      const updateCommentViews = (comments: Comment[]): Comment[] => {
+        return comments.map(comment => {
+          if (comment.id === commentId) {
+            return { ...comment, views: (comment.views || 0) + 1 };
+          }
+          if (comment.replies && comment.replies.length > 0) {
+            return { ...comment, replies: updateCommentViews(comment.replies) };
+          }
+          return comment;
+        });
+      };
+      return { ...post, comments: updateCommentViews(post.comments) };
     });
     savePosts(updatedPosts);
   };
@@ -235,7 +300,9 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       viewPost,
       getTrendingHashtags,
       getPostsByHashtag,
-      likeComment
+      likeComment,
+      getCommentById,
+      viewComment
     }}>
       {children}
     </PostContext.Provider>

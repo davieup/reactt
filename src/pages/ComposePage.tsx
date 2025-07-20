@@ -10,7 +10,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export function ComposePage() {
   const { user } = useAuth();
-  const { addPost, addComment } = usePosts();
+  const { addPost, addComment, getCommentById } = usePosts();
   const { getCommunityById } = useCommunities();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -22,14 +22,28 @@ export function ComposePage() {
 
   const communityId = searchParams.get('communityId');
   const postId = searchParams.get('postId');
+  const commentId = searchParams.get('commentId');
   const type = searchParams.get('type');
   
   const community = communityId ? getCommunityById(communityId) : null;
-  const isComment = type === 'comment' && postId;
+  const originalComment = commentId ? getCommentById(commentId) : null;
+  const isComment = type === 'comment' && (postId || commentId);
 
   const handlePost = (content: string, image?: string, video?: string) => {
-    if (isComment && postId) {
-      addComment(postId, user.id, content, image, video);
+    if (isComment && (postId || commentId)) {
+      const targetPostId = postId || (originalComment ? originalComment.postId : null);
+      const parentCommentId = commentId;
+      
+      if (targetPostId) {
+        addComment(targetPostId, user.id, content, image, video, parentCommentId);
+        
+        if (commentId) {
+          navigate(`/comment/${commentId}`);
+        } else {
+          navigate(`/post/${targetPostId}`);
+        }
+        return;
+      }
     } else if (communityId && community) {
       const contentWithHashtags = content + ' ' + community.hashtags.map(tag => `#${tag}`).join(' ');
       addPost(user.id, contentWithHashtags, image, video, communityId);
@@ -52,7 +66,12 @@ export function ComposePage() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <h1 className="text-xl font-bold">
-              {isComment ? 'Novo Comentário' : community ? `Post em ${community.name}` : 'Novo Post'}
+              {isComment 
+                ? (originalComment ? 'Responder Comentário' : 'Novo Comentário') 
+                : community 
+                  ? `Post em ${community.name}` 
+                  : 'Novo Post'
+              }
             </h1>
           </div>
         </header>
@@ -62,7 +81,7 @@ export function ComposePage() {
             onPost={handlePost} 
             placeholder={
               isComment 
-                ? 'Escreva seu comentário...' 
+                ? (originalComment ? 'Responda a este comentário...' : 'Escreva seu comentário...')
                 : community 
                   ? `O que está acontecendo em ${community.name}?`
                   : 'O que está acontecendo?'

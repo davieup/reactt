@@ -16,6 +16,7 @@ import { SearchPage } from "./pages/SearchPage";
 import { TrendFeedPage } from "./pages/TrendFeedPage";
 import { CommunityPage } from "./pages/CommunityPage";
 import { PostDetailPage } from "./pages/PostDetailPage";
+import { CommentDetailPage } from "./pages/CommentDetailPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { FollowPage } from "./pages/FollowPage";
@@ -47,6 +48,7 @@ const App = () => (
                     <Route path="/trend/:hashtag" element={<TrendFeedPage />} />
                     <Route path="/community/:id" element={<CommunityPage />} />
                     <Route path="/post/:postId" element={<PostDetailPage />} />
+                    <Route path="/comment/:commentId" element={<CommentDetailPage />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
