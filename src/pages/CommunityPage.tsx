@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Plus, Hash, Settings } from 'lucide-react';
+import { ArrowLeft, Users, Plus, Hash, Settings, ExternalLink } from 'lucide-react';
 import { useCommunities } from '@/contexts/CommunityContext';
 import { usePosts } from '@/contexts/PostContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -121,6 +121,33 @@ export function CommunityPage() {
               </button>
             )}
           </div>
+
+          {/* Bio */}
+          {community.bio && (
+            <div className="mb-4">
+              <p className="text-text-secondary text-sm">{community.bio}</p>
+            </div>
+          )}
+
+          {/* Links */}
+          {community.links && community.links.length > 0 && (
+            <div className="mb-4">
+              <div className="flex flex-wrap gap-2">
+                {community.links.map((link, index) => (
+                  <a
+                    key={index}
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-primary hover:text-primary/80 text-sm transition-colors"
+                  >
+                    <ExternalLink size={12} />
+                    {new URL(link).hostname}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Hashtags */}
           <div className="flex flex-wrap gap-2 mb-6">
