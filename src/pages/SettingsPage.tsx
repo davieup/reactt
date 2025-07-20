@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export function SettingsPage() {
-  const { user, updateProfile, deleteAccount, logout } = useAuth();
+  const { user, updateProfile, deleteAccount, logout, showDisplayName, setShowDisplayName } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   
@@ -149,7 +149,7 @@ export function SettingsPage() {
                 Customize the appearance of the app
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label>Theme</Label>
@@ -162,6 +162,21 @@ export function SettingsPage() {
                   <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} />
                   <Moon className="h-4 w-4" />
                 </div>
+              </div>
+
+              <Separator />
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Nome nos posts</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Mostrar nome de perfil em vez de nome de usuário
+                  </p>
+                </div>
+                <Switch 
+                  checked={showDisplayName} 
+                  onCheckedChange={setShowDisplayName}
+                />
               </div>
             </CardContent>
           </Card>

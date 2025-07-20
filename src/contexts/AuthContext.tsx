@@ -15,6 +15,7 @@ interface AuthUser extends User {
 interface AuthContextType {
   user: AuthUser | null;
   currentUser: AuthUser | null;
+  showDisplayName: boolean;
   login: (email: string, password: string) => boolean;
   register: (email: string, password: string, username: string, name: string, avatar: string) => boolean;
   logout: () => void;
@@ -24,6 +25,7 @@ interface AuthContextType {
   unfollowUser: (userId: string) => void;
   getUserById: (id: string) => AuthUser | undefined;
   users: AuthUser[];
+  setShowDisplayName: (show: boolean) => void;
 }
 
 const defaultUsers: AuthUser[] = [];
@@ -33,10 +35,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [users, setUsers] = useState<AuthUser[]>([]);
+  const [showDisplayName, setShowDisplayNameState] = useState<boolean>(true);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
     const savedUsers = localStorage.getItem('allUsers');
+    const savedShowDisplayName = localStorage.getItem('showDisplayName');
     
     if (savedUser) {
       setUser(JSON.parse(savedUser));
@@ -48,6 +52,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Initialize with default users if none exist
       setUsers(defaultUsers);
       localStorage.setItem('allUsers', JSON.stringify(defaultUsers));
+    }
+
+    if (savedShowDisplayName) {
+      setShowDisplayNameState(JSON.parse(savedShowDisplayName));
     }
   }, []);
 
@@ -168,10 +176,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return users.find(u => u.id === id);
   };
 
+  const setShowDisplayName = (show: boolean) => {
+    setShowDisplayNameState(show);
+    localStorage.setItem('showDisplayName', JSON.stringify(show));
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
       currentUser: user,
+      showDisplayName,
       login,
       register,
       logout,
@@ -180,7 +194,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       followUser,
       unfollowUser,
       getUserById,
-      users
+      users,
+      setShowDisplayName
     }}>
       {children}
     </AuthContext.Provider>

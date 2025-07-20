@@ -16,7 +16,7 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   const navigate = useNavigate();
-  const { user, users } = useAuth();
+  const { user, users, showDisplayName } = useAuth();
   const { likePost, repost, deletePost, editPost, viewPost } = usePosts();
   const { getCommunityById } = useCommunities();
   const [isEditing, setIsEditing] = useState(false);
@@ -92,7 +92,7 @@ export function PostCard({ post }: PostCardProps) {
       {post.repostOf && (
         <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-2 ml-10">
           <Repeat2 className="w-3 h-3" />
-          <span>{postUser.name} reposted</span>
+          <span>{showDisplayName ? postUser.name : `@${postUser.username}`} reposted</span>
         </div>
       )}
       
@@ -108,8 +108,9 @@ export function PostCard({ post }: PostCardProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-1">
-              <span className="font-semibold text-foreground text-sm">{postUser.name}</span>
-              <span className="text-muted-foreground text-sm">@{postUser.username}</span>
+              <span className="font-semibold text-foreground text-sm">
+                {showDisplayName ? postUser.name : `@${postUser.username}`}
+              </span>
               {postUser.verified && (
                 <Check className="w-3 h-3 text-blue-500" />
               )}

@@ -14,7 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 export function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
-  const { user, users } = useAuth();
+  const { user, users, showDisplayName } = useAuth();
   const { posts, addComment, likePost, repost, deletePost, editPost } = usePosts();
   const { getCommunityById } = useCommunities();
   const [commentText, setCommentText] = useState('');
@@ -114,8 +114,9 @@ export function PostDetailPage() {
                 </Avatar>
                 <div className="flex-1">
                   <div className="flex items-center space-x-1 mb-1">
-                    <span className="font-semibold text-sm">{postUser.name}</span>
-                    <span className="text-muted-foreground text-sm">@{postUser.username}</span>
+                    <span className="font-semibold text-sm">
+                      {showDisplayName ? postUser.name : `@${postUser.username}`}
+                    </span>
                     {post.userId === user.id && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -303,8 +304,9 @@ export function PostDetailPage() {
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center space-x-1 mb-1">
-                          <span className="font-semibold text-sm">{commentUser.name}</span>
-                          <span className="text-muted-foreground text-sm">@{commentUser.username}</span>
+                          <span className="font-semibold text-sm">
+                            {showDisplayName ? commentUser.name : `@${commentUser.username}`}
+                          </span>
                           <span className="text-muted-foreground text-sm">·</span>
                           <span className="text-muted-foreground text-sm">
                             {comment.timestamp.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}

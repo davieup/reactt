@@ -10,7 +10,7 @@ import { User, Community } from '@/types';
 import { CreateCommunityDialog } from '@/components/CreateCommunityDialog';
 
 export function SearchPage() {
-  const { users, user } = useAuth();
+  const { users, user, showDisplayName } = useAuth();
   const { getTrendingHashtags } = usePosts();
   const { communities, searchCommunities } = useCommunities();
   const navigate = useNavigate();
@@ -151,7 +151,9 @@ export function SearchPage() {
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-foreground">{searchUser.name}</span>
+                          <span className="font-semibold text-foreground">
+                            {showDisplayName ? searchUser.name : `@${searchUser.username}`}
+                          </span>
                           {searchUser.verified && (
                             <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
                               <span className="text-primary-foreground text-xs">✓</span>
