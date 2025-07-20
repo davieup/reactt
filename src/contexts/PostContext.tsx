@@ -25,6 +25,7 @@ const PostContext = createContext<PostContextType | undefined>(undefined);
 
 export function PostProvider({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<Post[]>([]);
+  const { addNotification } = useNotifications();
 
   useEffect(() => {
     const savedPosts = localStorage.getItem('posts');
@@ -120,45 +121,82 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     savePosts(updatedPosts);
   };
 
-  const addComment = (postId: string, userId: string, content: string, image?: string, video?: string, parentCommentId?: string) => {
+  const addComment = (postId: string, content: string, userId: string, image?: string, video?: string, commentId?: string) => {
     const newComment: Comment = {
       id: Date.now().toString(),
-      userId,
       postId,
+      userId,
       content,
-      image,
-      video,
       timestamp: new Date(),
       likes: [],
-      parentCommentId,
-      replies: [],
-      views: 0
+      views: 0,
+      image,
+      video,
+      replies: []
     };
 
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        if (parentCommentId) {
-          // Add reply to existing comment
-          const addReplyToComment = (comments: Comment[]): Comment[] => {
-            return comments.map(comment => {
-              if (comment.id === parentCommentId) {
-                return { ...comment, replies: [...(comment.replies || []), newComment] };
-              }
-              if (comment.replies && comment.replies.length > 0) {
-                return { ...comment, replies: addReplyToComment(comment.replies) };
-              }
-              return comment;
-            });
-          };
-          return { ...post, comments: addReplyToComment(post.comments) };
-        } else {
-          // Add top-level comment
-          return { ...post, comments: [...post.comments, newComment] };
+    setPosts(currentPosts => {
+      const updatedPosts = currentPosts.map(post => {
+        if (post.id === postId) {
+          if (commentId) {
+            // Add reply to specific comment
+            const addReplyToComment = (comments: Comment[]): Comment[] => {
+              return comments.map(comment => {
+                if (comment.id === commentId) {
+                  // Add notification for reply to comment
+                  if (comment.userId !== userId) {
+                    addNotification({
+                      type: 'comment',
+                      userId: comment.userId,
+                      fromUserId: userId,
+                      postId: postId,
+                      commentId: comment.id,
+                      read: false
+                    });
+                  }
+                  return {
+                    ...comment,
+                    replies: [...(comment.replies || []), newComment]
+                  };
+                }
+                if (comment.replies && comment.replies.length > 0) {
+                  return {
+                    ...comment,
+                    replies: addReplyToComment(comment.replies)
+                  };
+                }
+                return comment;
+              });
+            };
+            
+            return {
+              ...post,
+              comments: addReplyToComment(post.comments)
+            };
+          } else {
+            // Add comment to post
+            // Add notification for comment on post
+            if (post.userId !== userId) {
+              addNotification({
+                type: 'comment',
+                userId: post.userId,
+                fromUserId: userId,
+                postId: postId,
+                read: false
+              });
+            }
+            return {
+              ...post,
+              comments: [...post.comments, newComment]
+            };
+          }
         }
-      }
-      return post;
+        return post;
+      });
+      
+      localStorage.setItem('posts', JSON.stringify(updatedPosts));
+      return updatedPosts;
     });
-    savePosts(updatedPosts);
   };
 
   const likeComment = (commentId: string, userId: string) => {

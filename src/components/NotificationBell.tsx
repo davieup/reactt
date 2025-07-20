@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,10 +12,19 @@ import { useAuth } from '@/contexts/AuthContext';
 export function NotificationBell() {
   const { notifications, markAsRead, unreadCount } = useNotifications();
   const { users } = useAuth();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleNotificationClick = (notificationId: string) => {
+  const handleNotificationClick = (notificationId: string, notification: any) => {
     markAsRead(notificationId);
+    
+    // Navigate to the specific post or comment
+    if (notification.commentId) {
+      navigate(`/comment/${notification.commentId}`);
+    } else if (notification.postId) {
+      navigate(`/post/${notification.postId}`);
+    }
+    setIsOpen(false);
   };
 
   const getNotificationText = (notification: any) => {
@@ -73,7 +83,7 @@ export function NotificationBell() {
                     className={`flex items-start space-x-3 p-3 rounded-lg cursor-pointer transition-colors ${
                       !notification.read ? 'bg-accent/50' : 'hover:bg-accent/30'
                     }`}
-                    onClick={() => handleNotificationClick(notification.id)}
+                    onClick={() => handleNotificationClick(notification.id, notification)}
                   >
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={fromUser?.avatar} />

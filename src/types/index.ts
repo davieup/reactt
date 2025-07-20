@@ -27,6 +27,7 @@ export interface Notification {
   type: 'like' | 'comment' | 'follow' | 'repost' | 'community_post';
   fromUserId: string;
   postId?: string;
+  commentId?: string;
   communityId?: string;
   timestamp: Date;
   read: boolean;

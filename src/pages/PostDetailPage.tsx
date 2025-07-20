@@ -345,6 +345,9 @@ export function PostDetailPage() {
                             className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-2"
                           >
                             <Eye className="w-4 h-4" />
+                            {comment.replies && comment.replies.length > 0 && (
+                              <span className="text-xs">{comment.replies.length}</span>
+                            )}
                           </Button>
                         </div>
                       </div>
