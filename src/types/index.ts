@@ -19,6 +19,7 @@ export interface Comment {
   parentCommentId?: string;
   replies?: Comment[];
   views?: number;
+  viewedBy?: string[];
 }
 
 export interface Notification {
@@ -58,5 +59,6 @@ export interface Post {
   reposts: string[];
   repostOf?: string;
   views: number;
+  viewedBy: string[];
   communityId?: string;
 }

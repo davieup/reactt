@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Post, Comment } from '@/types';
+import { useMigration, migratePostsData } from '@/hooks/useMigration';
 import { useNotifications } from '@/contexts/NotificationContext';
 import postImage1 from '@/assets/post-image-1.jpg';
 
@@ -11,12 +12,12 @@ interface PostContextType {
   repost: (postId: string, userId: string) => void;
   deletePost: (postId: string) => void;
   editPost: (postId: string, content: string) => void;
-  viewPost: (postId: string) => void;
+  viewPost: (postId: string, userId?: string) => void;
   getTrendingHashtags: () => { hashtag: string; count: number }[];
   getPostsByHashtag: (hashtag: string) => Post[];
   likeComment: (commentId: string, userId: string) => void;
   getCommentById: (commentId: string) => Comment | null;
-  viewComment: (commentId: string) => void;
+  viewComment: (commentId: string, userId?: string) => void;
 }
 
 const defaultPosts: Post[] = [];
@@ -25,6 +26,12 @@ const PostContext = createContext<PostContextType | undefined>(undefined);
 
 export function PostProvider({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<Post[]>([]);
+  
+  // Migrate data when app version changes
+  useMigration({
+    version: '2.0.0',
+    migrate: migratePostsData
+  });
   const { addNotification } = useNotifications();
 
   useEffect(() => {
@@ -43,7 +50,9 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       const postsWithDates = parsedPosts.map((post: any) => ({
         ...post,
         timestamp: new Date(post.timestamp),
-        comments: convertTimestamps(post.comments || [])
+        comments: convertTimestamps(post.comments || []),
+        // Migrate old view system to new viewedBy system
+        viewedBy: post.viewedBy || []
       }));
       setPosts(postsWithDates);
     } else {
@@ -106,6 +115,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       comments: [],
       reposts: [],
       views: 0,
+      viewedBy: [],
       communityId
     };
 
@@ -245,12 +255,17 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     return null;
   };
 
-  const viewComment = (commentId: string) => {
+  const viewComment = (commentId: string, userId?: string) => {
+    if (!userId) return;
     const updatedPosts = posts.map(post => {
       const updateCommentViews = (comments: Comment[]): Comment[] => {
         return comments.map(comment => {
-          if (comment.id === commentId) {
-            return { ...comment, views: (comment.views || 0) + 1 };
+          if (comment.id === commentId && !comment.viewedBy?.includes(userId)) {
+            return { 
+              ...comment, 
+              views: (comment.views || 0) + 1,
+              viewedBy: [...(comment.viewedBy || []), userId]
+            };
           }
           if (comment.replies && comment.replies.length > 0) {
             return { ...comment, replies: updateCommentViews(comment.replies) };
@@ -292,7 +307,8 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
       comments: [],
       reposts: [],
       repostOf: postId,
-      views: 0
+      views: 0,
+      viewedBy: []
     };
 
     const updatedPosts = posts.map(post => {
@@ -321,13 +337,23 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     savePosts(updatedPosts);
   };
 
-  const viewPost = (postId: string) => {
+  const viewPost = (postId: string, userId?: string) => {
+    if (!userId) return;
+    
     const updatedPosts = posts.map(post => {
       if (post.id === postId) {
-        return { ...post, views: post.views + 1 };
+        // Only count view if user hasn't viewed this post before
+        if (!post.viewedBy.includes(userId)) {
+          return { 
+            ...post, 
+            views: post.views + 1,
+            viewedBy: [...post.viewedBy, userId]
+          };
+        }
       }
       return post;
     });
+    setPosts(updatedPosts);
     savePosts(updatedPosts);
   };
 

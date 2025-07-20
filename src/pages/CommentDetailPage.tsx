@@ -85,7 +85,7 @@ export function CommentDetailPage() {
   };
 
   const handleView = () => {
-    viewComment(comment.id);
+    viewComment(comment.id, user.id);
   };
 
   const handleViewReply = (replyId: string) => {
