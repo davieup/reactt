@@ -25,8 +25,8 @@ export function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-full mx-auto">
+    <div className="min-h-screen bg-background overflow-y-auto">
+      <div className="max-w-full mx-auto h-full">
         <header className="sticky top-0 glass-effect border-b border-border px-4 py-3 z-10 flex justify-between items-center">
           <h1 className="text-lg font-bold">Reactt</h1>
           <div className="flex items-center space-x-2">

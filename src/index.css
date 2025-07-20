@@ -99,6 +99,13 @@ div[style*="Edit with Lovable"],
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden;
+    height: 100vh;
+  }
+
+  html {
+    height: 100%;
+    overflow-x: hidden;
   }
 
   .glass-effect {
