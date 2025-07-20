@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePosts } from '@/contexts/PostContext';
@@ -6,21 +7,31 @@ import { Button } from '@/components/ui/button';
 import { BottomNav } from '@/components/BottomNav';
 import { PostCard } from '@/components/PostCard';
 import { ArrowLeft, Settings, Check, Eye, Edit3 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 export function ProfilePage() {
-  const { user } = useAuth();
+  const { user, users } = useAuth();
   const { posts } = usePosts();
   const navigate = useNavigate();
+  const { userId } = useParams();
 
   if (!user) {
     navigate('/login');
     return null;
   }
 
-  const userPosts = posts.filter(post => post.userId === user.id);
-  const userReposts = posts.filter(post => post.repostOf && post.userId === user.id);
+  // Determine which user profile to show
+  const profileUser = userId ? users.find(u => u.id === userId) : user;
+  const isOwnProfile = !userId || userId === user.id;
+
+  if (!profileUser) {
+    navigate('/');
+    return null;
+  }
+
+  const userPosts = posts.filter(post => post.userId === profileUser.id);
+  const userReposts = posts.filter(post => post.repostOf && post.userId === profileUser.id);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -47,17 +58,19 @@ export function ProfilePage() {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <div>
-                <h1 className="text-xl font-bold">{user.name}</h1>
+                <h1 className="text-xl font-bold">{profileUser.name}</h1>
                 <p className="text-sm text-muted-foreground">{userPosts.length} posts</p>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate('/settings')}
-            >
-              <Settings className="w-5 h-5" />
-            </Button>
+            {isOwnProfile && (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => navigate('/settings')}
+              >
+                <Settings className="w-5 h-5" />
+              </Button>
+            )}
           </div>
         </header>
 
@@ -69,8 +82,8 @@ export function ProfilePage() {
                 <DialogTrigger asChild>
                   <div className="relative cursor-pointer group">
                     <Avatar className="w-20 h-20">
-                      <AvatarImage src={user.avatar} />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage src={profileUser.avatar} />
+                      <AvatarFallback>{profileUser.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center">
                       <Eye className="w-6 h-6 text-white" />
@@ -80,49 +93,53 @@ export function ProfilePage() {
                 <DialogContent className="max-w-md">
                   <div className="flex flex-col items-center space-y-4">
                     <Avatar className="w-32 h-32">
-                      <AvatarImage src={user.avatar} />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage src={profileUser.avatar} />
+                      <AvatarFallback>{profileUser.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div className="flex space-x-2">
                       <Button variant="outline" size="sm">
                         <Eye className="w-4 h-4 mr-2" />
-                        Visualizar
+                        View
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => navigate('/settings')}>
-                        <Edit3 className="w-4 h-4 mr-2" />
-                        Editar
-                      </Button>
+                      {isOwnProfile && (
+                        <Button variant="outline" size="sm" onClick={() => navigate('/settings')}>
+                          <Edit3 className="w-4 h-4 mr-2" />
+                          Edit
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </DialogContent>
               </Dialog>
               
-              <Button 
-                variant="outline" 
-                className="rounded-full px-6"
-                onClick={() => navigate('/settings')}
-              >
-                Editar perfil
-              </Button>
+              {isOwnProfile && (
+                <Button 
+                  variant="outline" 
+                  className="rounded-full px-6"
+                  onClick={() => navigate('/settings')}
+                >
+                  Edit profile
+                </Button>
+              )}
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <h2 className="text-xl font-bold">{user.name}</h2>
-                {user.verified && (
+                <h2 className="text-xl font-bold">{profileUser.name}</h2>
+                {profileUser.verified && (
                   <Check className="w-5 h-5 text-blue-500" />
                 )}
               </div>
-              <p className="text-muted-foreground">@{user.username}</p>
-              {user.bio && <p className="text-foreground">{user.bio}</p>}
-              {user.profileLink && (
+              <p className="text-muted-foreground">@{profileUser.username}</p>
+              {profileUser.bio && <p className="text-foreground">{profileUser.bio}</p>}
+              {profileUser.profileLink && (
                 <a 
-                  href={user.profileLink} 
+                  href={profileUser.profileLink} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:underline"
                 >
-                  {user.profileLink}
+                  {profileUser.profileLink}
                 </a>
               )}
             </div>
@@ -132,15 +149,15 @@ export function ProfilePage() {
                 onClick={() => navigate('/follow')}
                 className="hover:underline"
               >
-                <span className="font-bold text-foreground">{user.following.length}</span>
-                <span className="text-muted-foreground ml-1">Seguindo</span>
+                <span className="font-bold text-foreground">{profileUser.following.length}</span>
+                <span className="text-muted-foreground ml-1">Following</span>
               </button>
               <button 
                 onClick={() => navigate('/follow')}
                 className="hover:underline"
               >
-                <span className="font-bold text-foreground">{user.followers.length}</span>
-                <span className="text-muted-foreground ml-1">Seguidores</span>
+                <span className="font-bold text-foreground">{profileUser.followers.length}</span>
+                <span className="text-muted-foreground ml-1">Followers</span>
               </button>
             </div>
           </div>

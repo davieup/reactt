@@ -58,6 +58,15 @@ export function PostCard({ post }: PostCardProps) {
     viewPost(post.id);
   };
 
+  const handleProfileClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (postUser.id === user.id) {
+      navigate('/profile');
+    } else {
+      navigate(`/profile/${postUser.id}`);
+    }
+  };
+
   React.useEffect(() => {
     handleView();
   }, []);
@@ -76,12 +85,15 @@ export function PostCard({ post }: PostCardProps) {
       {post.repostOf && (
         <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-2 ml-10">
           <Repeat2 className="w-3 h-3" />
-          <span>{postUser.name} repostou</span>
+          <span>{postUser.name} reposted</span>
         </div>
       )}
       
       <div className="flex space-x-3">
-        <Avatar className="h-10 w-10 flex-shrink-0">
+        <Avatar 
+          className="h-10 w-10 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity" 
+          onClick={handleProfileClick}
+        >
           <AvatarImage src={postUser.avatar} />
           <AvatarFallback>{postUser.name.charAt(0)}</AvatarFallback>
         </Avatar>

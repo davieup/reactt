@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Search, X, TrendingUp, Users, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +10,7 @@ import { User, Community } from '@/types';
 import { CreateCommunityDialog } from '@/components/CreateCommunityDialog';
 
 export function SearchPage() {
-  const { users } = useAuth();
+  const { users, user } = useAuth();
   const { getTrendingHashtags } = usePosts();
   const { communities, searchCommunities } = useCommunities();
   const navigate = useNavigate();
@@ -22,10 +23,10 @@ export function SearchPage() {
     setSearchQuery(query);
     
     if (query.trim()) {
-      const userResults = users.filter(user =>
-        user.name.toLowerCase().includes(query.toLowerCase()) ||
-        user.username.toLowerCase().includes(query.toLowerCase()) ||
-        user.bio?.toLowerCase().includes(query.toLowerCase())
+      const userResults = users.filter(userResult =>
+        userResult.name.toLowerCase().includes(query.toLowerCase()) ||
+        userResult.username.toLowerCase().includes(query.toLowerCase()) ||
+        userResult.bio?.toLowerCase().includes(query.toLowerCase())
       );
       const commResults = searchCommunities(query);
       setSearchResults(userResults);
@@ -40,6 +41,14 @@ export function SearchPage() {
     setSearchQuery('');
     setSearchResults([]);
     setCommunityResults([]);
+  };
+
+  const handleUserProfileClick = (selectedUser: User) => {
+    if (selectedUser.id === user?.id) {
+      navigate('/profile');
+    } else {
+      navigate(`/profile/${selectedUser.id}`);
+    }
   };
 
   const trendingHashtags = getTrendingHashtags();
@@ -93,7 +102,7 @@ export function SearchPage() {
               <div>
                 <h3 className="text-md font-semibold text-foreground mb-3 flex items-center gap-2">
                   <Users size={16} />
-                  Comunidades
+                  Communities
                 </h3>
                 <div className="space-y-3">
                   {communityResults.map((community) => (
@@ -109,7 +118,7 @@ export function SearchPage() {
                       />
                       <div className="flex-1">
                         <p className="font-semibold text-foreground">{community.name}</p>
-                        <p className="text-text-muted text-sm">{community.followers.length} seguidores</p>
+                        <p className="text-text-muted text-sm">{community.followers.length} followers</p>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {community.hashtags.slice(0, 2).map((hashtag) => (
                             <span key={hashtag} className="text-xs text-text-secondary bg-muted px-1 rounded">
@@ -127,30 +136,31 @@ export function SearchPage() {
             {/* Users Results */}
             {searchResults.length > 0 && (
               <div>
-                <h3 className="text-md font-semibold text-foreground mb-3">Pessoas</h3>
+                <h3 className="text-md font-semibold text-foreground mb-3">People</h3>
                 <div className="space-y-3">
-                  {searchResults.map((user) => (
+                  {searchResults.map((searchUser) => (
                     <div
-                      key={user.id}
+                      key={searchUser.id}
+                      onClick={() => handleUserProfileClick(searchUser)}
                       className="flex items-center gap-3 p-3 bg-card rounded-xl hover:bg-muted transition-colors cursor-pointer"
                     >
                       <img 
-                        src={user.avatar} 
-                        alt={user.name}
-                        className="w-12 h-12 rounded-full object-cover"
+                        src={searchUser.avatar} 
+                        alt={searchUser.name}
+                        className="w-12 h-12 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
                       />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-foreground">{user.name}</span>
-                          {user.verified && (
+                          <span className="font-semibold text-foreground">{searchUser.name}</span>
+                          {searchUser.verified && (
                             <div className="w-4 h-4 bg-primary rounded-full flex items-center justify-center">
                               <span className="text-primary-foreground text-xs">✓</span>
                             </div>
                           )}
                         </div>
-                        <p className="text-text-muted text-sm">@{user.username}</p>
-                        {user.bio && (
-                          <p className="text-text-secondary text-sm mt-1">{user.bio}</p>
+                        <p className="text-text-muted text-sm">@{searchUser.username}</p>
+                        {searchUser.bio && (
+                          <p className="text-text-secondary text-sm mt-1">{searchUser.bio}</p>
                         )}
                       </div>
                     </div>
@@ -202,9 +212,9 @@ export function SearchPage() {
               ) : (
                 <div className="text-center py-8">
                   <TrendingUp size={48} className="text-text-muted mx-auto mb-4 opacity-50" />
-                  <p className="text-text-muted">Nenhuma trend no momento</p>
+                  <p className="text-text-muted">No trends at the moment</p>
                   <p className="text-text-muted text-sm mt-2">
-                    Use hashtags nos seus posts para criar trends!
+                    Use hashtags in your posts to create trends!
                   </p>
                 </div>
               )}
@@ -215,14 +225,14 @@ export function SearchPage() {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                   <Users size={20} />
-                  Comunidades
+                  Communities
                 </h2>
                 <button
                   onClick={() => setShowCreateCommunity(true)}
                   className="flex items-center gap-1 px-3 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors"
                 >
                   <Plus size={16} />
-                  Criar
+                  Create
                 </button>
               </div>
               
@@ -245,7 +255,7 @@ export function SearchPage() {
                             {community.name}
                           </p>
                           <p className="text-text-muted text-sm">
-                            {community.followers.length} seguidores
+                            {community.followers.length} followers
                           </p>
                         </div>
                       </div>
@@ -255,9 +265,9 @@ export function SearchPage() {
               ) : (
                 <div className="text-center py-8">
                   <Users size={48} className="text-text-muted mx-auto mb-4 opacity-50" />
-                  <p className="text-text-muted">Nenhuma comunidade ainda</p>
+                  <p className="text-text-muted">No communities yet</p>
                   <p className="text-text-muted text-sm mt-2">
-                    Crie a primeira comunidade!
+                    Create the first community!
                   </p>
                 </div>
               )}
