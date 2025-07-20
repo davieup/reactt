@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -5,56 +6,72 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Check } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export function FollowPage() {
   const { user, users, followUser, unfollowUser } = useAuth();
   const navigate = useNavigate();
+  const { userId } = useParams();
 
   if (!user) {
     navigate('/login');
     return null;
   }
 
-  const following = users.filter(u => user.following.includes(u.id));
-  const followers = users.filter(u => user.followers.includes(u.id));
+  // Determine which user's connections to show
+  const targetUser = userId ? users.find(u => u.id === userId) : user;
+  const isOwnConnections = !userId || userId === user.id;
 
-  const handleToggleFollow = (userId: string) => {
-    if (user.following.includes(userId)) {
-      unfollowUser(userId);
+  if (!targetUser) {
+    navigate('/');
+    return null;
+  }
+
+  const following = users.filter(u => targetUser.following.includes(u.id));
+  const followers = users.filter(u => targetUser.followers.includes(u.id));
+
+  const handleToggleFollow = (userIdToToggle: string) => {
+    if (user.following.includes(userIdToToggle)) {
+      unfollowUser(userIdToToggle);
     } else {
-      followUser(userId);
+      followUser(userIdToToggle);
     }
   };
 
-  const UserCard = ({ targetUser, showFollowButton = false }: { targetUser: any, showFollowButton?: boolean }) => (
+  const UserCard = ({ targetUserCard, showFollowButton = false }: { targetUserCard: any, showFollowButton?: boolean }) => (
     <Card className="mb-4">
       <CardContent className="flex items-center justify-between p-4">
-        <div className="flex items-center space-x-3">
+        <div 
+          className="flex items-center space-x-3 cursor-pointer flex-1"
+          onClick={() => navigate(`/profile/${targetUserCard.id}`)}
+        >
           <Avatar className="w-12 h-12">
-            <AvatarImage src={targetUser.avatar} />
-            <AvatarFallback>{targetUser.name[0]}</AvatarFallback>
+            <AvatarImage src={targetUserCard.avatar} />
+            <AvatarFallback>{targetUserCard.name[0]}</AvatarFallback>
           </Avatar>
           <div>
             <div className="flex items-center space-x-1">
-              <h3 className="font-semibold">{targetUser.name}</h3>
-              {targetUser.verified && (
+              <h3 className="font-semibold">{targetUserCard.name}</h3>
+              {targetUserCard.verified && (
                 <Check className="w-4 h-4 text-blue-500" />
               )}
             </div>
-            <p className="text-sm text-muted-foreground">@{targetUser.username}</p>
-            {targetUser.bio && (
-              <p className="text-sm text-muted-foreground mt-1">{targetUser.bio}</p>
+            <p className="text-sm text-muted-foreground">@{targetUserCard.username}</p>
+            {targetUserCard.bio && (
+              <p className="text-sm text-muted-foreground mt-1">{targetUserCard.bio}</p>
             )}
           </div>
         </div>
-        {showFollowButton && (
+        {showFollowButton && targetUserCard.id !== user.id && (
           <Button
-            variant={user.following.includes(targetUser.id) ? "outline" : "default"}
-            size="sm"
-            onClick={() => handleToggleFollow(targetUser.id)}
+            variant={user.following.includes(targetUserCard.id) ? "outline" : "default"}
+            size="sm"  
+            onClick={(e) => {
+              e.stopPropagation();
+              handleToggleFollow(targetUserCard.id);
+            }}
           >
-            {user.following.includes(targetUser.id) ? 'Seguindo' : 'Seguir'}
+            {user.following.includes(targetUserCard.id) ? 'Seguindo' : 'Seguir'}
           </Button>
         )}
       </CardContent>
@@ -68,11 +85,16 @@ export function FollowPage() {
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate(isOwnConnections ? '/profile' : `/profile/${targetUser.id}`)}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-2xl font-bold">Conexões</h1>
+          <div>
+            <h1 className="text-2xl font-bold">Conexões</h1>
+            <p className="text-sm text-muted-foreground">
+              {isOwnConnections ? 'Suas conexões' : `Conexões de ${targetUser.name}`}
+            </p>
+          </div>
         </div>
 
         <Tabs defaultValue="following" className="space-y-4">
@@ -89,14 +111,16 @@ export function FollowPage() {
             {following.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <p className="text-muted-foreground">Você ainda não está seguindo ninguém</p>
+                  <p className="text-muted-foreground">
+                    {isOwnConnections ? 'Você ainda não está seguindo ninguém' : `${targetUser.name} ainda não está seguindo ninguém`}
+                  </p>
                 </CardContent>
               </Card>
             ) : (
               following.map(followedUser => (
                 <UserCard 
                   key={followedUser.id} 
-                  targetUser={followedUser} 
+                  targetUserCard={followedUser} 
                   showFollowButton={true}
                 />
               ))
@@ -107,14 +131,16 @@ export function FollowPage() {
             {followers.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <p className="text-muted-foreground">Você ainda não tem seguidores</p>
+                  <p className="text-muted-foreground">
+                    {isOwnConnections ? 'Você ainda não tem seguidores' : `${targetUser.name} ainda não tem seguidores`}
+                  </p>
                 </CardContent>
               </Card>
             ) : (
               followers.map(follower => (
                 <UserCard 
                   key={follower.id} 
-                  targetUser={follower} 
+                  targetUserCard={follower} 
                   showFollowButton={true}
                 />
               ))

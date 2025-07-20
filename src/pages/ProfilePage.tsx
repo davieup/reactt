@@ -6,12 +6,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { BottomNav } from '@/components/BottomNav';
 import { PostCard } from '@/components/PostCard';
-import { ArrowLeft, Settings, Check, Eye, Edit3 } from 'lucide-react';
+import { ArrowLeft, Settings, Check, Eye, Edit3, UserPlus, UserMinus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 export function ProfilePage() {
-  const { user, users } = useAuth();
+  const { user, users, followUser, unfollowUser } = useAuth();
   const { posts } = usePosts();
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -32,6 +32,15 @@ export function ProfilePage() {
 
   const userPosts = posts.filter(post => post.userId === profileUser.id);
   const userReposts = posts.filter(post => post.repostOf && post.userId === profileUser.id);
+  const isFollowing = user.following.includes(profileUser.id);
+
+  const handleToggleFollow = () => {
+    if (isFollowing) {
+      unfollowUser(profileUser.id);
+    } else {
+      followUser(profileUser.id);
+    }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -112,13 +121,31 @@ export function ProfilePage() {
                 </DialogContent>
               </Dialog>
               
-              {isOwnProfile && (
+              {isOwnProfile ? (
                 <Button 
                   variant="outline" 
                   className="rounded-full px-6"
                   onClick={() => navigate('/settings')}
                 >
                   Edit profile
+                </Button>
+              ) : (
+                <Button 
+                  variant={isFollowing ? "outline" : "default"}
+                  className="rounded-full px-6"
+                  onClick={handleToggleFollow}
+                >
+                  {isFollowing ? (
+                    <>
+                      <UserMinus className="w-4 h-4 mr-2" />
+                      Deixar de seguir
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Seguir
+                    </>
+                  )}
                 </Button>
               )}
             </div>
@@ -146,14 +173,14 @@ export function ProfilePage() {
 
             <div className="flex space-x-6 text-sm">
               <button 
-                onClick={() => navigate('/follow')}
+                onClick={() => navigate(`/follow/${profileUser.id}`)}
                 className="hover:underline"
               >
                 <span className="font-bold text-foreground">{profileUser.following.length}</span>
                 <span className="text-muted-foreground ml-1">Following</span>
               </button>
               <button 
-                onClick={() => navigate('/follow')}
+                onClick={() => navigate(`/follow/${profileUser.id}`)}
                 className="hover:underline"
               >
                 <span className="font-bold text-foreground">{profileUser.followers.length}</span>
