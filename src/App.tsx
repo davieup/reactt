@@ -10,6 +10,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { CommunityProvider } from "@/contexts/CommunityContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { VerificationProvider } from "@/contexts/VerificationContext";
+import { FeedAlgorithmProvider } from "@/contexts/FeedAlgorithmContext";
 import { HomePage } from "./pages/HomePage";
 import { ComposePage } from "./pages/ComposePage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -34,9 +35,10 @@ const App = () => (
             <NotificationProvider>
               <CommunityProvider>
                 <PostProvider>
-                  <Toaster />
-                  <Sonner />
-                  <BrowserRouter>
+                  <FeedAlgorithmProvider>
+                    <Toaster />
+                    <Sonner />
+                    <BrowserRouter>
                     <Routes>
                       <Route path="/login" element={<LoginPage />} />
                       <Route path="/" element={<HomePage />} />
@@ -55,6 +57,7 @@ const App = () => (
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </BrowserRouter>
+                  </FeedAlgorithmProvider>
                 </PostProvider>
               </CommunityProvider>
             </NotificationProvider>
