@@ -7,9 +7,10 @@ import { useCommunities } from '@/contexts/CommunityContext';
 import { useResponsive } from '@/hooks/useResponsive';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Repeat2, MoreHorizontal, Check, Eye, Edit, Trash2, Users, ChevronDown, ChevronUp } from 'lucide-react';
+import { Heart, MessageCircle, Repeat2, MoreHorizontal, Eye, Edit, Trash2, Users, ChevronDown, ChevronUp } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Textarea } from '@/components/ui/textarea';
+import { VerificationBadge } from './VerificationBadge';
 
 interface PostCardProps {
   post: Post;
@@ -187,14 +188,12 @@ export function PostCard({ post }: PostCardProps) {
         </Avatar>
         
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center space-x-1">
+                      <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center space-x-1">
                 <span className="font-semibold text-foreground text-xs sm:text-sm">
                 {showDisplayName ? postUser.name : `@${postUser.username}`}
               </span>
-              {postUser.verified && (
-                <Check className="w-3 h-3 text-blue-500" />
-              )}
+              <VerificationBadge verified={postUser.verified} size="sm" />
                 <span className="text-muted-foreground text-xs sm:text-sm">·</span>
                 <span className="text-muted-foreground text-xs sm:text-sm">
                 {post.timestamp.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}

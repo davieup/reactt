@@ -6,9 +6,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { BottomNav } from '@/components/BottomNav';
 import { PostCard } from '@/components/PostCard';
-import { ArrowLeft, Settings, Check, Eye, Edit3, UserPlus, UserMinus } from 'lucide-react';
+import { ArrowLeft, Settings, Eye, Edit3, UserPlus, UserMinus } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { VerificationBadge } from '@/components/VerificationBadge';
 
 export function ProfilePage() {
   const { user, users, followUser, unfollowUser } = useAuth();
@@ -153,9 +154,7 @@ export function ProfilePage() {
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <h2 className="text-xl font-bold">{profileUser.name}</h2>
-                {profileUser.verified && (
-                  <Check className="w-5 h-5 text-blue-500" />
-                )}
+                <VerificationBadge verified={profileUser.verified} size="lg" />
               </div>
               <p className="text-muted-foreground">@{profileUser.username}</p>
               {profileUser.bio && <p className="text-foreground">{profileUser.bio}</p>}

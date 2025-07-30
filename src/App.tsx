@@ -9,6 +9,7 @@ import { PostProvider } from "@/contexts/PostContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { CommunityProvider } from "@/contexts/CommunityContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { VerificationProvider } from "@/contexts/VerificationContext";
 import { HomePage } from "./pages/HomePage";
 import { ComposePage } from "./pages/ComposePage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -29,33 +30,35 @@ const App = () => (
     <TooltipProvider>
       <ThemeProvider>
         <AuthProvider>
-          <NotificationProvider>
-            <CommunityProvider>
-              <PostProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Routes>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/compose" element={<ComposePage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/profile/:userId" element={<ProfilePage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="/follow" element={<FollowPage />} />
-                    <Route path="/follow/:userId" element={<FollowPage />} />
-                    <Route path="/search" element={<SearchPage />} />
-                    <Route path="/trend/:hashtag" element={<TrendFeedPage />} />
-                    <Route path="/community/:id" element={<CommunityPage />} />
-                    <Route path="/post/:postId" element={<PostDetailPage />} />
-                    <Route path="/comment/:commentId" element={<CommentDetailPage />} />
-                    {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </BrowserRouter>
-              </PostProvider>
-            </CommunityProvider>
-          </NotificationProvider>
+          <VerificationProvider>
+            <NotificationProvider>
+              <CommunityProvider>
+                <PostProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/compose" element={<ComposePage />} />
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/profile/:userId" element={<ProfilePage />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route path="/follow" element={<FollowPage />} />
+                      <Route path="/follow/:userId" element={<FollowPage />} />
+                      <Route path="/search" element={<SearchPage />} />
+                      <Route path="/trend/:hashtag" element={<TrendFeedPage />} />
+                      <Route path="/community/:id" element={<CommunityPage />} />
+                      <Route path="/post/:postId" element={<PostDetailPage />} />
+                      <Route path="/comment/:commentId" element={<CommentDetailPage />} />
+                      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </BrowserRouter>
+                </PostProvider>
+              </CommunityProvider>
+            </NotificationProvider>
+          </VerificationProvider>
         </AuthProvider>
       </ThemeProvider>
     </TooltipProvider>

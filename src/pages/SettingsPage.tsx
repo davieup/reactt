@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useVerification } from '@/contexts/VerificationContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,13 +10,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
-import { Camera, ArrowLeft, Trash2, Moon, Sun } from 'lucide-react';
+import { Camera, ArrowLeft, Trash2, Moon, Sun, Check, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { VerificationBadge } from '@/components/VerificationBadge';
 
 export function SettingsPage() {
   const { user, updateProfile, deleteAccount, logout, showDisplayName, setShowDisplayName } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { acquireGreenBadge, acquireBlueBadge, greenBadgeCount, isGreenBadgeAvailable } = useVerification();
   const navigate = useNavigate();
   
   const [name, setName] = useState(user?.name || '');
@@ -25,6 +28,8 @@ export function SettingsPage() {
   const [deletePassword, setDeletePassword] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [error, setError] = useState('');
+  const [badgeMessage, setBadgeMessage] = useState('');
+  const [showBadgeMessage, setShowBadgeMessage] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,6 +59,20 @@ export function SettingsPage() {
     } else {
       setError('Incorrect password');
     }
+  };
+
+  const handleAcquireGreenBadge = () => {
+    const result = acquireGreenBadge();
+    setBadgeMessage(result.message);
+    setShowBadgeMessage(true);
+    setTimeout(() => setShowBadgeMessage(false), 5000);
+  };
+
+  const handleAcquireBlueBadge = () => {
+    const result = acquireBlueBadge();
+    setBadgeMessage(result.message);
+    setShowBadgeMessage(true);
+    setTimeout(() => setShowBadgeMessage(false), 5000);
   };
 
   if (!user) {
@@ -178,6 +197,94 @@ export function SettingsPage() {
                   onCheckedChange={setShowDisplayName}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Selos de Verificação</CardTitle>
+              <CardDescription>
+                Adquira selos especiais para destacar seu perfil
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Selo Verde */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <VerificationBadge verified="green" size="md" />
+                    <div>
+                      <h3 className="font-semibold">Selo Verde (Founder)</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Disponível para os 100 primeiros usuários
+                      </p>
+                    </div>
+                  </div>
+                  <div className="ml-auto text-right">
+                    <p className="text-sm font-medium">
+                      {greenBadgeCount}/100 utilizados
+                    </p>
+                    <p className="text-xs text-muted-foreground">Gratuito</p>
+                  </div>
+                </div>
+                
+                {user?.verified === "green" ? (
+                  <div className="flex items-center space-x-2 text-green-600">
+                    <Check className="w-4 h-4" />
+                    <span className="text-sm">Você possui o selo verde!</span>
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={handleAcquireGreenBadge}
+                    disabled={!isGreenBadgeAvailable()}
+                    variant={isGreenBadgeAvailable() ? "default" : "outline"}
+                    className="w-full"
+                  >
+                    <Crown className="w-4 h-4 mr-2" />
+                    Adquirir selo verde
+                  </Button>
+                )}
+              </div>
+
+              <Separator />
+
+              {/* Selo Azul */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <VerificationBadge verified="blue" size="md" />
+                    <div>
+                      <h3 className="font-semibold">Selo Azul (Influencer)</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Disponível para todos os usuários
+                      </p>
+                    </div>
+                  </div>
+                  <div className="ml-auto text-right">
+                    <p className="text-sm font-medium">$3/mês</p>
+                    <p className="text-xs text-muted-foreground">Em breve</p>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={handleAcquireBlueBadge}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Crown className="w-4 h-4 mr-2" />
+                  Adquirir selo azul
+                </Button>
+              </div>
+
+              {showBadgeMessage && (
+                <div className={`p-3 rounded-md text-sm ${
+                  badgeMessage.includes('Parabéns') 
+                    ? 'bg-green-50 text-green-700 border border-green-200' 
+                    : 'bg-blue-50 text-blue-700 border border-blue-200'
+                }`}>
+                  {badgeMessage}
+                </div>
+              )}
             </CardContent>
           </Card>
 

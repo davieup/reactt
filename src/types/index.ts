@@ -4,7 +4,7 @@ export interface User {
   name: string;
   avatar: string;
   bio?: string;
-  verified?: boolean;
+  verified?: "green" | "blue" | boolean;
 }
 
 export interface Comment {
