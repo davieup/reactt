@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Post, Comment } from '@/types';
 import { useMigration, migratePostsData } from '@/hooks/useMigration';
 import { useNotifications } from '@/contexts/NotificationContext';
+import { useAuth } from '@/contexts/AuthContext';
 import postImage1 from '@/assets/post-image-1.jpg';
 
 interface PostContextType {
@@ -33,6 +34,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     migrate: migratePostsData
   });
   const { addNotification } = useNotifications();
+  const { users } = useAuth();
 
   useEffect(() => {
     const savedPosts = localStorage.getItem('posts');
@@ -121,6 +123,20 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
 
     const updatedPosts = [newPost, ...posts];
     savePosts(updatedPosts);
+
+    // Add notifications for followers
+    const currentUser = users.find(u => u.id === userId);
+    if (currentUser) {
+      currentUser.followers.forEach(followerId => {
+        addNotification({
+          type: communityId ? 'community_post' : 'new_post',
+          userId: followerId,
+          fromUserId: userId,
+          postId: newPost.id,
+          read: false
+        });
+      });
+    }
   };
 
   const likePost = (postId: string, userId: string) => {

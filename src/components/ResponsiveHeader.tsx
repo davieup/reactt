@@ -100,49 +100,8 @@ export function ResponsiveHeader({
 
           {/* Right Section */}
           <div className="flex items-center space-x-1 sm:space-x-2">
-            {/* Mobile: Show action buttons */}
-            {isMobile && (
-              <>
-                {showSearchButton && (
-                  <ResponsiveIconButton
-                    variant="ghost"
-                    icon={<Search className="w-4 h-4" />}
-                    onClick={handleSearch}
-                  />
-                )}
-                
-                {showNewPostButton && (
-                  <ResponsiveIconButton
-                    variant="ghost"
-                    icon={<Plus className="w-4 h-4" />}
-                    onClick={handleNewPost}
-                  />
-                )}
-                
-                <ResponsiveIconButton
-                  variant="ghost"
-                  icon={<User className="w-4 h-4" />}
-                  onClick={handleProfile}
-                />
-              </>
-            )}
-
-            {/* Tablet/Desktop: Show notification bell and logout */}
-            {(isTablet || isDesktop) && (
-              <>
-                <NotificationBell />
-                <ResponsiveIconButton
-                  variant="ghost"
-                  icon={<Settings className="w-4 h-4" />}
-                  onClick={handleSettings}
-                />
-                <ResponsiveIconButton
-                  variant="ghost"
-                  icon={<LogOut className="w-4 h-4" />}
-                  onClick={handleLogout}
-                />
-              </>
-            )}
+            {/* Notification Bell for all devices */}
+            <NotificationBell />
           </div>
         </div>
       </ResponsiveContainer>

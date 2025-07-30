@@ -190,8 +190,19 @@ export function ProfilePage() {
 
           {/* Posts */}
           <div className="border-t border-border">
-            {userPosts.map((post) => (
-              <PostCard key={post.id} post={post} />
+            {userPosts.map((post, index) => (
+              <React.Fragment key={post.id}>
+                <PostCard post={post} />
+                {index === 0 && userPosts.length > 1 && (
+                  <div className="px-4 py-2 bg-muted/30 border-b border-border">
+                    <div className="flex items-center justify-center">
+                      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+                      <span className="px-3 text-xs text-muted-foreground font-medium">Primeiro post</span>
+                      <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+                    </div>
+                  </div>
+                )}
+              </React.Fragment>
             ))}
             {userReposts.map((post) => (
               <PostCard key={`repost-${post.id}`} post={post} />

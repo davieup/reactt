@@ -40,6 +40,10 @@ export function NotificationBell() {
         return `${userName} começou a seguir você`;
       case 'repost':
         return `${userName} repostou seu post`;
+      case 'new_post':
+        return `${userName} fez um novo post`;
+      case 'community_post':
+        return `${userName} postou na comunidade`;
       default:
         return 'Nova notificação';
     }
