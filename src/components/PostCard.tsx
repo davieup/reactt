@@ -4,6 +4,7 @@ import { Post, Comment } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePosts } from '@/contexts/PostContext';
 import { useCommunities } from '@/contexts/CommunityContext';
+import { useResponsive } from '@/hooks/useResponsive';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Heart, MessageCircle, Repeat2, MoreHorizontal, Check, Eye, Edit, Trash2, Users, ChevronDown, ChevronUp } from 'lucide-react';
@@ -19,6 +20,7 @@ export function PostCard({ post }: PostCardProps) {
   const { user, users, showDisplayName } = useAuth();
   const { likePost, repost, deletePost, editPost, viewPost, likeComment } = usePosts();
   const { getCommunityById } = useCommunities();
+  const { isMobile, isTablet, isDesktop } = useResponsive();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
   const [showComments, setShowComments] = useState(false);
@@ -167,17 +169,17 @@ export function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <div className="px-4 py-3 hover:bg-muted/50 transition-colors border-b border-border">
+    <div className="px-2 sm:px-4 py-3 hover:bg-muted/50 transition-colors border-b border-border">
       {post.repostOf && (
-        <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-2 ml-10">
+        <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-2 ml-8 sm:ml-10">
           <Repeat2 className="w-3 h-3" />
           <span>{showDisplayName ? postUser.name : `@${postUser.username}`} reposted</span>
         </div>
       )}
       
-      <div className="flex space-x-3">
+      <div className="flex space-x-2 sm:space-x-3">
         <Avatar 
-          className="h-10 w-10 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity" 
+          className={`${isMobile ? 'h-8 w-8' : 'h-10 w-10'} flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity`}
           onClick={handleProfileClick}
         >
           <AvatarImage src={postUser.avatar} />
@@ -187,14 +189,14 @@ export function PostCard({ post }: PostCardProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center space-x-1">
-              <span className="font-semibold text-foreground text-sm">
+                <span className="font-semibold text-foreground text-xs sm:text-sm">
                 {showDisplayName ? postUser.name : `@${postUser.username}`}
               </span>
               {postUser.verified && (
                 <Check className="w-3 h-3 text-blue-500" />
               )}
-              <span className="text-muted-foreground text-sm">·</span>
-              <span className="text-muted-foreground text-sm">
+                <span className="text-muted-foreground text-xs sm:text-sm">·</span>
+                <span className="text-muted-foreground text-xs sm:text-sm">
                 {post.timestamp.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}
               </span>
             </div>
@@ -204,7 +206,7 @@ export function PostCard({ post }: PostCardProps) {
                 className="p-1 text-primary hover:text-primary/80 transition-colors hover:bg-primary/10 rounded-full"
                 title={community.name}
               >
-                <Users size={14} />
+                <Users size={isMobile ? 12 : 14} />
               </button>
             )}
           </div>
@@ -215,7 +217,7 @@ export function PostCard({ post }: PostCardProps) {
                 <Textarea
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
-                  className="min-h-[80px] text-sm"
+                  className="min-h-[80px] text-xs sm:text-sm"
                 />
                 <div className="flex space-x-2">
                   <Button size="sm" onClick={handleEdit}>Salvar</Button>
@@ -223,7 +225,7 @@ export function PostCard({ post }: PostCardProps) {
                 </div>
               </div>
             ) : (
-              <p className="text-foreground text-sm leading-relaxed">{renderContentWithHashtags(post.content)}</p>
+              <p className="text-foreground text-xs sm:text-sm leading-relaxed">{renderContentWithHashtags(post.content)}</p>
             )}
             
             {post.image && (
@@ -256,12 +258,12 @@ export function PostCard({ post }: PostCardProps) {
                 e.stopPropagation();
                 setShowComments(!showComments);
               }}
-              className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-2"
+              className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-1 sm:p-2"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span className="text-xs">{post.comments.length}</span>
+              <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="text-xs hidden sm:inline">{post.comments.length}</span>
               {post.comments.length > 0 && (
-                showComments ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />
+                showComments ? <ChevronUp className="w-2 h-2 sm:w-3 sm:h-3" /> : <ChevronDown className="w-2 h-2 sm:w-3 sm:h-3" />
               )}
             </Button>
             
@@ -272,10 +274,10 @@ export function PostCard({ post }: PostCardProps) {
                 e.stopPropagation();
                 handleRepost();
               }}
-              className="flex items-center space-x-1 text-muted-foreground hover:text-green-500 hover:bg-green-500/10 rounded-full p-2"
+              className="flex items-center space-x-1 text-muted-foreground hover:text-green-500 hover:bg-green-500/10 rounded-full p-1 sm:p-2"
             >
-              <Repeat2 className="w-4 h-4" />
-              <span className="text-xs">{post.reposts.length}</span>
+              <Repeat2 className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="text-xs hidden sm:inline">{post.reposts.length}</span>
             </Button>
             
             <Button
@@ -285,16 +287,16 @@ export function PostCard({ post }: PostCardProps) {
                 e.stopPropagation();
                 handleLike();
               }}
-              className={`flex items-center space-x-1 rounded-full p-2 ${
+              className={`flex items-center space-x-1 rounded-full p-1 sm:p-2 ${
                 isLiked 
                   ? 'text-red-500 hover:text-red-600 hover:bg-red-500/10' 
                   : 'text-muted-foreground hover:text-red-500 hover:bg-red-500/10'
               }`}
             >
-              <Heart className={`w-4 h-4 ${
+              <Heart className={`w-3 h-3 sm:w-4 sm:h-4 ${
                 isLiked ? 'fill-current' : ''
               }`} />
-              <span className="text-xs">{post.likes.length}</span>
+              <span className="text-xs hidden sm:inline">{post.likes.length}</span>
             </Button>
             
             <Button
@@ -304,10 +306,10 @@ export function PostCard({ post }: PostCardProps) {
                 e.stopPropagation();
                 handleView();
               }}
-              className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-2"
+              className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-1 sm:p-2"
             >
-              <Eye className="w-4 h-4" />
-              <span className="text-xs">{post.views || 0}</span>
+              <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="text-xs hidden sm:inline">{post.views || 0}</span>
             </Button>
 
             {post.userId === user.id && (
@@ -317,9 +319,9 @@ export function PostCard({ post }: PostCardProps) {
                     variant="ghost"
                     size="sm"
                     onClick={(e) => e.stopPropagation()}
-                    className="text-muted-foreground hover:text-foreground hover:bg-muted/10 rounded-full p-2"
+                    className="text-muted-foreground hover:text-foreground hover:bg-muted/10 rounded-full p-1 sm:p-2"
                   >
-                    <MoreHorizontal className="w-4 h-4" />
+                    <MoreHorizontal className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
@@ -347,19 +349,7 @@ export function PostCard({ post }: PostCardProps) {
             <div className="mt-4 border-t border-border pt-3">
               <div className="space-y-2">
                 {post.comments.slice(0, 3).map(comment => renderComment(comment))}
-                {post.comments.length > 3 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleView();
-                    }}
-                    className="text-sm text-primary hover:text-primary/80"
-                  >
-                    Ver todos os {post.comments.length} comentários
-                  </Button>
-                )}
+                {/* Botão de ver mais comentários removido */}
               </div>
             </div>
           )}
