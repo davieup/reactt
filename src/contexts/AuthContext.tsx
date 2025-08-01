@@ -77,18 +77,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = (email: string, password: string, username: string, name: string, avatar: string): boolean => {
-    const existingUser = users.find(u => u.email === email || u.username === username);
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanUsername = username.trim().toLowerCase();
+    const existingUser = users.find(u => u.email.trim().toLowerCase() === cleanEmail || u.username.trim().toLowerCase() === cleanUsername);
     if (existingUser) {
       return false;
     }
 
     const newUser: AuthUser = {
       id: Date.now().toString(),
-      email,
+      email: cleanEmail,
       password: encode(password),
-      username,
+      username: cleanUsername,
       name,
-      avatar,
+      avatar: avatar || '',
       bio: '',
       verified: false,
       following: [],

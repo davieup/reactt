@@ -65,13 +65,12 @@ export function FollowPage() {
         {showFollowButton && targetUserCard.id !== user.id && (
           <Button
             variant={user.following.includes(targetUserCard.id) ? "outline" : "default"}
-            size="sm"  
             onClick={(e) => {
               e.stopPropagation();
               handleToggleFollow(targetUserCard.id);
             }}
           >
-                            {user.following.includes(targetUserCard.id) ? 'Following' : 'Follow'}
+            {user.following.includes(targetUserCard.id) ? 'Following' : 'Follow'}
           </Button>
         )}
       </CardContent>
