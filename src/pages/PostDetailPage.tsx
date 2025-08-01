@@ -15,7 +15,7 @@ export function PostDetailPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const { user, users, showDisplayName } = useAuth();
-  const { posts, addComment, likePost, repost, deletePost, editPost, likeComment } = usePosts();
+  const { posts, addComment, likePost, repost, deletePost, editPost, likeComment, viewPost } = usePosts();
   const { getCommunityById } = useCommunities();
   
   
@@ -81,6 +81,13 @@ export function PostDetailPage() {
       </div>
     );
   }
+
+  // Registrar visualização quando acessar a página
+  React.useEffect(() => {
+    if (user && postId) {
+      viewPost(postId, user.id);
+    }
+  }, [postId, user?.id, viewPost]);
 
   const community = post.communityId ? getCommunityById(post.communityId) : null;
   const isLiked = post.likes.includes(user.id);
@@ -220,7 +227,7 @@ export function PostDetailPage() {
                     year: '2-digit'
                   })}</span>
                   <span className="mx-2">·</span>
-                  <span>{(post.views || 0).toLocaleString()} Visualizações</span>
+                  <span>{post.viewedBy.length.toLocaleString()} Visualizações</span>
                 </div>
               </div>
             )}

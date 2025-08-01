@@ -74,6 +74,13 @@ export function CommentDetailPage() {
     );
   }
 
+  // Registrar visualização quando acessar a página
+  React.useEffect(() => {
+    if (user && commentId) {
+      viewComment(commentId, user.id);
+    }
+  }, [commentId, user?.id, viewComment]);
+
   const isLiked = comment.likes?.includes(user.id) || false;
 
   const handleLike = () => {
@@ -82,10 +89,6 @@ export function CommentDetailPage() {
 
   const handleReply = () => {
     navigate(`/compose?type=comment&commentId=${comment.id}&postId=${comment.postId}`);
-  };
-
-  const handleView = () => {
-    viewComment(comment.id, user.id);
   };
 
   const handleViewReply = (replyId: string) => {
@@ -157,7 +160,7 @@ export function CommentDetailPage() {
                     year: '2-digit'
                   })}</span>
                   <span className="mx-2">·</span>
-                  <span>{(comment.views || 0).toLocaleString()} Visualizações</span>
+                  <span>{(comment.viewedBy?.length || 0).toLocaleString()} Visualizações</span>
                 </div>
               </div>
             </div>
@@ -205,7 +208,6 @@ export function CommentDetailPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleView}
                 className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-3"
               >
                 <Eye className="w-5 h-5" />

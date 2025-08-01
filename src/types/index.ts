@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   username: string;
@@ -25,7 +26,7 @@ export interface Comment {
 export interface Notification {
   id: string;
   userId: string;
-  type: 'like' | 'comment' | 'follow' | 'repost' | 'community_post';
+  type: 'like' | 'comment' | 'follow' | 'repost' | 'community_post' | 'new_post';
   fromUserId: string;
   postId?: string;
   commentId?: string;
