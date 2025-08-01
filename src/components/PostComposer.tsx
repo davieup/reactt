@@ -13,7 +13,7 @@ interface PostComposerProps {
   placeholder?: string;
 }
 
-export function PostComposer({ onPost, onCancel, placeholder = "O que está acontecendo?" }: PostComposerProps) {
+export function PostComposer({ onPost, onCancel, placeholder = "What's happening?" }: PostComposerProps) {
   const { user } = useAuth();
   const { addPost } = usePosts();
   const [content, setContent] = useState('');

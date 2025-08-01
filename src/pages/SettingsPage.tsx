@@ -84,7 +84,7 @@ export function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-2xl mx-auto p-4">
+      <div className="max-w-2xl mx-auto p-4 pb-20">
         <div className="flex items-center space-x-4 mb-6">
           <Button 
             variant="ghost" 
@@ -93,10 +93,10 @@ export function SettingsPage() {
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-2xl font-bold">Settings</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Settings</h1>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Profile Settings</CardTitle>
@@ -135,7 +135,7 @@ export function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label>Profile Picture</Label>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <img
                     src={avatar || '/placeholder.svg'}
                     alt="Profile"
@@ -145,7 +145,7 @@ export function SettingsPage() {
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="text-sm"
+                    className="text-sm w-full sm:w-auto"
                   />
                 </div>
               </div>
@@ -164,7 +164,7 @@ export function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <Label>Display Name Instead of Username</Label>
                   <p className="text-sm text-muted-foreground">
@@ -202,54 +202,83 @@ export function SettingsPage() {
                 Acquire special badges to highlight your profile
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">✓</span>
+            <CardContent className="space-y-6">
+              {/* Green Badge */}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <VerificationBadge verified="green" size="md" />
+                    <div>
+                      <h3 className="font-semibold">Green Badge (Founder)</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Available for the first 100 users
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold">Green Badge (Founder)</p>
-                    <p className="text-sm text-muted-foreground">
-                      Available for the first 100 users - {greenBadgeCount}/100 used
+                  <div className="sm:ml-auto text-left sm:text-right">
+                    <p className="text-sm font-medium">
+                      {greenBadgeCount}/100 used
                     </p>
+                    <p className="text-xs text-muted-foreground">Free</p>
                   </div>
                 </div>
-                <Button
-                  onClick={handleAcquireGreenBadge}
-                  disabled={!isGreenBadgeAvailable}
-                  variant="outline"
-                  size="sm"
-                >
-                  {isGreenBadgeAvailable ? 'Acquire' : 'Unavailable'}
-                </Button>
+                
+                {user?.verified === "green" ? (
+                  <div className="flex items-center space-x-2 text-green-600">
+                    <Check className="w-4 h-4" />
+                    <span className="text-sm">You have the green badge!</span>
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={handleAcquireGreenBadge}
+                    disabled={!isGreenBadgeAvailable}
+                    variant={isGreenBadgeAvailable ? "default" : "outline"}
+                    className="w-full"
+                  >
+                    <Crown className="w-4 h-4 mr-2" />
+                    Acquire green badge
+                  </Button>
+                )}
               </div>
-              
-              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">✓</span>
+
+              <Separator />
+
+              {/* Blue Badge */}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <VerificationBadge verified="blue" size="md" />
+                    <div>
+                      <h3 className="font-semibold">Blue Badge (Influencer)</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Available for all users
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold">Blue Badge (Influencer)</p>
-                    <p className="text-sm text-muted-foreground">
-                      Premium verification badge
-                    </p>
+                  <div className="sm:ml-auto text-left sm:text-right">
+                    <p className="text-sm font-medium">$3/month</p>
+                    <p className="text-xs text-muted-foreground">Coming soon</p>
                   </div>
                 </div>
-                <Button
+                
+                <Button 
                   onClick={handleAcquireBlueBadge}
                   variant="outline"
-                  size="sm"
+                  className="w-full"
                 >
-                  Acquire
+                  <Crown className="w-4 h-4 mr-2" />
+                  Acquire blue badge
                 </Button>
               </div>
               
               {showBadgeMessage && (
-                <Alert>
-                  <AlertDescription>{badgeMessage}</AlertDescription>
-                </Alert>
+                <div className={`p-3 rounded-md text-sm ${
+                  badgeMessage.includes('Congratulations') 
+                    ? 'bg-green-50 text-green-700 border border-green-200' 
+                    : 'bg-blue-50 text-blue-700 border border-blue-200'
+                }`}>
+                  {badgeMessage}
+                </div>
               )}
             </CardContent>
           </Card>

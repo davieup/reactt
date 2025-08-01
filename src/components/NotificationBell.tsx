@@ -77,7 +77,7 @@ export function NotificationBell() {
           <div className="space-y-4">
             {notifications.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">
-                Nenhuma notificação ainda
+                No notifications yet
               </p>
             ) : (
               notifications.map((notification) => {

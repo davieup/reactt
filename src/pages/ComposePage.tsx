@@ -81,7 +81,7 @@ export function ComposePage() {
             onPost={handlePost} 
             placeholder={
               isComment 
-                ? (originalComment ? 'Responda a este comentário...' : 'Escreva seu comentário...')
+                                  ? (originalComment ? 'Reply to this comment...' : 'Write your comment...')
                 : community 
                               ? `What's happening in ${community.name}?`
             : 'What\'s happening?'

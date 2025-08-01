@@ -13,17 +13,17 @@ export function FeedDistributionInfo() {
                       <span>Feed Algorithm</span>
         </CardTitle>
         <CardDescription>
-          Distribuição inteligente de conteúdo baseada em selos e relacionamentos
+                      Intelligent content distribution based on badges and relationships
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">
-          {/* Usuários seguidos */}
+                      {/* Followed users */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Users className="w-4 h-4 text-blue-600" />
-                <span className="text-sm font-medium">Usuários seguidos</span>
+                <span className="text-sm font-medium">Followed users</span>
               </div>
               <span className="text-sm text-muted-foreground">35%</span>
             </div>
@@ -54,12 +54,12 @@ export function FeedDistributionInfo() {
             <Progress value={25} className="h-2" />
           </div>
 
-          {/* Usuários não verificados */}
+                      {/* Unverified users */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Crown className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium">Outros usuários</span>
+                <span className="text-sm font-medium">Other users</span>
               </div>
               <span className="text-sm text-muted-foreground">10%</span>
             </div>

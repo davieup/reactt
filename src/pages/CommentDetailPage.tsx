@@ -47,7 +47,7 @@ export function CommentDetailPage() {
         <div className="max-w-2xl mx-auto">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Voltar
+            Back
           </Button>
           <div className="text-center py-12">
             <p className="text-muted-foreground">Reply not found</p>
@@ -64,7 +64,7 @@ export function CommentDetailPage() {
         <div className="max-w-2xl mx-auto">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Voltar
+            Back
           </Button>
           <div className="text-center py-12">
             <p className="text-muted-foreground">User not found</p>
@@ -104,7 +104,7 @@ export function CommentDetailPage() {
             <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
               <ArrowLeft className="w-4 h-4" />
             </Button>
-            <h1 className="text-lg font-bold">Resposta</h1>
+            <h1 className="text-lg font-bold">Reply</h1>
           </div>
         </header>
 

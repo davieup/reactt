@@ -12,10 +12,10 @@ export function VerificationInfo() {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Crown className="w-5 h-5 text-green-600" />
-          <span>Selos de Verificação</span>
+                      <span>Verification Badges</span>
         </CardTitle>
         <CardDescription>
-          Sistema de selos especiais para destacar perfis na plataforma
+                      Special badge system to highlight profiles on the platform
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
