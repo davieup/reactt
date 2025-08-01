@@ -51,9 +51,9 @@ export function TrendFeedPage() {
           </div>
         ) : (
           <div className="text-center py-12">
-            <p className="text-text-muted text-lg">Nenhum post encontrado</p>
+                          <p className="text-text-muted text-lg">No posts found</p>
             <p className="text-text-muted text-sm mt-2">
-              Seja o primeiro a postar sobre {displayHashtag}
+              Be the first to post about {displayHashtag}
             </p>
           </div>
         )}

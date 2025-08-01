@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Search, X, TrendingUp, Users, Plus } from 'lucide-react';
+import { Search, X, TrendingUp, Users, Plus, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BottomNav } from '@/components/BottomNav';
 import { useAuth } from '@/contexts/AuthContext';
@@ -63,7 +63,15 @@ export function SearchPage() {
       {/* Header */}
       <header className="glass-effect border-b border-border sticky top-0 z-40">
         <div className="max-w-md mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Search</h1>
+          <div className="flex items-center gap-3 mb-4">
+            <button
+              onClick={() => navigate('/')}
+              className="p-2 hover:bg-muted rounded-full transition-colors"
+            >
+              <ArrowLeft size={20} className="text-foreground" />
+            </button>
+            <h1 className="text-2xl font-bold text-foreground">Search</h1>
+          </div>
           
           {/* Search Input */}
           <div className="relative">

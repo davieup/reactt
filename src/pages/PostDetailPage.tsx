@@ -38,10 +38,10 @@ export function PostDetailPage() {
         <div className="max-w-2xl mx-auto">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Voltar
+            Back
           </Button>
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Carregando...</p>
+            <p className="text-muted-foreground">Loading...</p>
           </div>
         </div>
       </div>
@@ -55,10 +55,10 @@ export function PostDetailPage() {
         <div className="max-w-2xl mx-auto">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Voltar
+            Back
           </Button>
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Post não encontrado</p>
+            <p className="text-muted-foreground">Post not found</p>
           </div>
         </div>
       </div>
@@ -72,10 +72,10 @@ export function PostDetailPage() {
         <div className="max-w-2xl mx-auto">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Voltar
+            Back
           </Button>
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Usuário não encontrado</p>
+            <p className="text-muted-foreground">User not found</p>
           </div>
         </div>
       </div>
@@ -159,11 +159,11 @@ export function PostDetailPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={startEdit}>
                             <Edit className="w-3 h-3 mr-2" />
-                            Editar
+                            Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={handleDelete} className="text-destructive">
                             <Trash2 className="w-3 h-3 mr-2" />
-                            Excluir
+                            Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -185,10 +185,10 @@ export function PostDetailPage() {
                 />
                 <div className="flex space-x-2">
                   <Button size="sm" onClick={handleEdit}>
-                    Salvar
+                    Save
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>
-                    Cancelar
+                    Cancel
                   </Button>
                 </div>
               </div>
@@ -227,7 +227,7 @@ export function PostDetailPage() {
                     year: '2-digit'
                   })}</span>
                   <span className="mx-2">·</span>
-                  <span>{post.viewedBy.length.toLocaleString()} Visualizações</span>
+                  <span>{post.viewedBy.length.toLocaleString()} Views</span>
                 </div>
               </div>
             )}
@@ -237,15 +237,15 @@ export function PostDetailPage() {
             <div className="flex items-center justify-around text-sm">
               <div className="flex items-center space-x-1">
                 <span className="font-semibold">{post.reposts.length}</span>
-                <span className="text-muted-foreground">Republicações</span>
+                <span className="text-muted-foreground">Reposts</span>
               </div>
               <div className="flex items-center space-x-1">
                 <span className="font-semibold">{post.comments.length}</span>
-                <span className="text-muted-foreground">Comentários</span>
+                <span className="text-muted-foreground">Comments</span>
               </div>
               <div className="flex items-center space-x-1">
                 <span className="font-semibold">{post.likes.length}</span>
-                <span className="text-muted-foreground">Curtidas</span>
+                <span className="text-muted-foreground">Likes</span>
               </div>
             </div>
           </div>
@@ -307,7 +307,7 @@ export function PostDetailPage() {
             {post.comments.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-sm">
-                  Nenhuma resposta ainda. Seja o primeiro a responder!
+                  No replies yet. Be the first to reply!
                 </p>
               </div>
             ) : (

@@ -47,7 +47,7 @@ export function VerificationInfo() {
 
         <div className="flex items-center space-x-2 text-sm text-muted-foreground">
           <Users className="w-4 h-4" />
-          <span>Acesse Configurações para adquirir selos</span>
+                      <span>Go to Settings to acquire badges</span>
         </div>
       </CardContent>
     </Card>

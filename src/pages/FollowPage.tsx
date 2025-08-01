@@ -71,7 +71,7 @@ export function FollowPage() {
               handleToggleFollow(targetUserCard.id);
             }}
           >
-            {user.following.includes(targetUserCard.id) ? 'Seguindo' : 'Seguir'}
+                            {user.following.includes(targetUserCard.id) ? 'Following' : 'Follow'}
           </Button>
         )}
       </CardContent>
@@ -100,7 +100,7 @@ export function FollowPage() {
         <Tabs defaultValue="following" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="following">
-              Seguindo ({following.length})
+                              Following ({following.length})
             </TabsTrigger>
             <TabsTrigger value="followers">
               Seguidores ({followers.length})
@@ -112,7 +112,7 @@ export function FollowPage() {
               <Card>
                 <CardContent className="p-8 text-center">
                   <p className="text-muted-foreground">
-                    {isOwnConnections ? 'Você ainda não está seguindo ninguém' : `${targetUser.name} ainda não está seguindo ninguém`}
+                    {isOwnConnections ? 'You are not following anyone yet' : `${targetUser.name} is not following anyone yet`}
                   </p>
                 </CardContent>
               </Card>
@@ -132,7 +132,7 @@ export function FollowPage() {
               <Card>
                 <CardContent className="p-8 text-center">
                   <p className="text-muted-foreground">
-                    {isOwnConnections ? 'Você ainda não tem seguidores' : `${targetUser.name} ainda não tem seguidores`}
+                    {isOwnConnections ? 'You do not have any followers yet' : `${targetUser.name} does not have any followers yet`}
                   </p>
                 </CardContent>
               </Card>

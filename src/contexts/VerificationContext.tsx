@@ -17,7 +17,7 @@ export function VerificationProvider({ children }: { children: React.ReactNode }
   const [greenBadgeCount, setGreenBadgeCount] = useState(0);
 
   useEffect(() => {
-    // Contar quantos usuários já têm o selo verde
+    // Count how many users already have the green badge
     const count = users.filter(user => user.verified === "green").length;
     setGreenBadgeCount(count);
   }, [users]);
@@ -30,7 +30,7 @@ export function VerificationProvider({ children }: { children: React.ReactNode }
     if (!isGreenBadgeAvailable()) {
       return {
         success: false,
-        message: "Desculpe, todos os 100 selos verdes já foram distribuídos."
+        message: "Sorry, all 100 green badges have already been distributed."
       };
     }
 
@@ -39,7 +39,7 @@ export function VerificationProvider({ children }: { children: React.ReactNode }
     if (!savedUser) {
       return {
         success: false,
-        message: "Usuário não encontrado."
+        message: "User not found."
       };
     }
 
@@ -48,23 +48,23 @@ export function VerificationProvider({ children }: { children: React.ReactNode }
     if (currentUser.verified === "green") {
       return {
         success: false,
-        message: "Você já possui o selo verde!"
+        message: "You already have the green badge!"
       };
     }
 
-    // Atualizar o perfil do usuário
+    // Update user profile
     updateProfile({ verified: "green" });
 
     return {
       success: true,
-      message: "Parabéns! Você adquiriu o selo verde (Founder). Este selo é vitalício e gratuito."
+              message: "Congratulations! You acquired the green badge (Founder). This badge is lifetime and free."
     };
   };
 
   const acquireBlueBadge = () => {
     return {
       success: false,
-      message: "Função em desenvolvimento. Em breve você poderá adquirir este selo por $3/mês."
+              message: "Feature under development. Soon you will be able to acquire this badge for $3/month."
     };
   };
 

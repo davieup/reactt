@@ -164,7 +164,7 @@ export function PostComposer({ onPost, onCancel, placeholder = "O que está acon
                       onClick={onCancel}
                       className="rounded-full px-6"
                     >
-                      Cancelar
+                      Cancel
                     </Button>
                   )}
                   <Button 
@@ -172,7 +172,7 @@ export function PostComposer({ onPost, onCancel, placeholder = "O que está acon
                     disabled={!content.trim() || content.length > maxLength}
                     className="rounded-full px-6"
                   >
-                    Postar
+                                            Post
                   </Button>
                 </div>
               </div>

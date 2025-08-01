@@ -61,9 +61,9 @@ export function Sidebar() {
 
         {/* Communities Followed */}
         <div className="flex-1 overflow-y-auto px-4">
-          <h2 className="text-xs font-semibold text-muted-foreground mt-4 mb-2 uppercase tracking-wider">Minhas Comunidades</h2>
+                      <h2 className="text-xs font-semibold text-muted-foreground mt-4 mb-2 uppercase tracking-wider">My Communities</h2>
           {followedCommunities.length === 0 && (
-            <p className="text-xs text-muted-foreground">Você ainda não segue nenhuma comunidade.</p>
+                          <p className="text-xs text-muted-foreground">You are not following any communities yet.</p>
           )}
           <ul className="space-y-2">
             {followedCommunities.map((community) => (

@@ -108,7 +108,7 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
   const sanitize = (str: string) => str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   const addPost = (userId: string, content: string, image?: string, video?: string, communityId?: string) => {
-    // Validação: não permitir posts vazios ou só com espaços
+    // Validation: don't allow empty posts or only spaces
     if (!content || !content.trim()) return;
     const safeContent = sanitize(content.trim());
     const newPost: Post = {

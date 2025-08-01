@@ -10,7 +10,7 @@ export function FeedDistributionInfo() {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <TrendingUp className="w-5 h-5 text-blue-600" />
-          <span>Algoritmo de Feed</span>
+                      <span>Feed Algorithm</span>
         </CardTitle>
         <CardDescription>
           Distribuição inteligente de conteúdo baseada em selos e relacionamentos
@@ -69,8 +69,8 @@ export function FeedDistributionInfo() {
 
         <div className="pt-2 border-t border-border">
           <p className="text-xs text-muted-foreground">
-            O algoritmo prioriza conteúdo de usuários verificados e que você segue, 
-            mantendo diversidade no feed.
+            The algorithm prioritizes content from verified users and those you follow, 
+            maintaining diversity in the feed.
           </p>
         </div>
       </CardContent>

@@ -30,10 +30,10 @@ export function CommentDetailPage() {
         <div className="max-w-2xl mx-auto">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Voltar
+            Back
           </Button>
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Carregando...</p>
+            <p className="text-muted-foreground">Loading...</p>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@ export function CommentDetailPage() {
             Voltar
           </Button>
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Resposta não encontrada</p>
+            <p className="text-muted-foreground">Reply not found</p>
           </div>
         </div>
       </div>
@@ -67,7 +67,7 @@ export function CommentDetailPage() {
             Voltar
           </Button>
           <div className="text-center py-12">
-            <p className="text-muted-foreground">Usuário não encontrado</p>
+            <p className="text-muted-foreground">User not found</p>
           </div>
         </div>
       </div>
@@ -229,7 +229,7 @@ export function CommentDetailPage() {
             {!comment.replies || comment.replies.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground text-sm">
-                  Nenhuma resposta ainda. Seja o primeiro a responder!
+                  No replies yet. Be the first to reply!
                 </p>
               </div>
             ) : (

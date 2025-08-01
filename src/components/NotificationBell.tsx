@@ -34,19 +34,19 @@ export function NotificationBell() {
 
     switch (notification.type) {
       case 'like':
-        return `${userName} curtiu seu post`;
+        return `${userName} liked your post`;
       case 'comment':
-        return `${userName} comentou em seu post`;
+        return `${userName} commented on your post`;
       case 'follow':
-        return `${userName} começou a seguir você`;
+        return `${userName} started following you`;
       case 'repost':
-        return `${userName} repostou seu post`;
+        return `${userName} reposted your post`;
       case 'new_post':
-        return `${userName} fez um novo post`;
+        return `${userName} made a new post`;
       case 'community_post':
-        return `${userName} postou na comunidade`;
+        return `${userName} posted in the community`;
       default:
-        return 'Nova notificação';
+        return 'New notification';
     }
   };
 
@@ -71,7 +71,7 @@ export function NotificationBell() {
       </SheetTrigger>
       <SheetContent className="w-80 sm:w-96">
         <SheetHeader>
-          <SheetTitle>Notificações</SheetTitle>
+          <SheetTitle>Notifications</SheetTitle>
         </SheetHeader>
         <ScrollArea className="h-full mt-6">
           <div className="space-y-4">

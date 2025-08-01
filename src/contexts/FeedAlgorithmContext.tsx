@@ -10,12 +10,12 @@ interface FeedAlgorithmContextType {
 
 const FeedAlgorithmContext = createContext<FeedAlgorithmContextType | undefined>(undefined);
 
-// Distribuição de conteúdo (soma total: 100%)
+  // Content distribution (total sum: 100%)
 const FEED_DISTRIBUTION = {
-  FOLLOWED_USERS: 0.35,        // 35% - Usuários que o usuário segue
-  GREEN_BADGE_USERS: 0.30,     // 30% - Usuários com selo verde (Founder)
-  BLUE_BADGE_USERS: 0.25,      // 25% - Usuários com selo azul (Influencer)
-  UNVERIFIED_USERS: 0.10       // 10% - Usuários não seguidos e não verificados
+      FOLLOWED_USERS: 0.35,        // 35% - Users that the user follows
+    GREEN_BADGE_USERS: 0.30,     // 30% - Users with green badge (Founder)
+    BLUE_BADGE_USERS: 0.25,      // 25% - Users with blue badge (Influencer)
+    UNVERIFIED_USERS: 0.10       // 10% - Users not followed and not verified
 };
 
 export function FeedAlgorithmProvider({ children }: { children: React.ReactNode }) {
@@ -32,22 +32,22 @@ export function FeedAlgorithmProvider({ children }: { children: React.ReactNode 
 
     let score = 0;
 
-    // 1. Posts de usuários seguidos (35%)
+    // 1. Posts from followed users (35%)
     if (currentUser.following.includes(postUser.id)) {
       score += 100 * FEED_DISTRIBUTION.FOLLOWED_USERS;
     }
 
-    // 2. Posts de usuários com selo verde (30%)
+    // 2. Posts from users with green badge (30%)
     if (postUser.verified === "green") {
       score += 100 * FEED_DISTRIBUTION.GREEN_BADGE_USERS;
     }
 
-    // 3. Posts de usuários com selo azul (25%)
+    // 3. Posts from users with blue badge (25%)
     if (postUser.verified === "blue") {
       score += 100 * FEED_DISTRIBUTION.BLUE_BADGE_USERS;
     }
 
-    // 4. Posts de usuários não verificados e não seguidos (10%)
+    // 4. Posts from unverified and unfollowed users (10%)
     if (!postUser.verified && !currentUser.following.includes(postUser.id)) {
       score += 100 * FEED_DISTRIBUTION.UNVERIFIED_USERS;
     }
@@ -100,7 +100,7 @@ export function FeedAlgorithmProvider({ children }: { children: React.ReactNode 
     const sortByScore = (posts: Post[]) => 
       posts.sort((a, b) => calculatePostScore(b, currentUserId) - calculatePostScore(a, currentUserId));
 
-    // Selecionar posts de cada categoria
+    // Select posts from each category
     let selectedPosts: Post[] = [
       ...sortByScore(followedPosts).slice(0, followedCount),
       ...sortByScore(greenBadgePosts).slice(0, greenBadgeCount),
@@ -108,9 +108,9 @@ export function FeedAlgorithmProvider({ children }: { children: React.ReactNode 
       ...sortByScore(unverifiedPosts).slice(0, unverifiedCount)
     ];
 
-    // Se não atingiu o total desejado, preenche com posts restantes das categorias
+    // If it didn't reach the desired total, fill with remaining posts from categories
     if (selectedPosts.length < totalPosts) {
-      // Junta todos os posts restantes que não foram selecionados ainda
+      // Join all remaining posts that haven't been selected yet
       const allSorted = sortByScore([
         ...followedPosts,
         ...greenBadgePosts,
@@ -122,7 +122,7 @@ export function FeedAlgorithmProvider({ children }: { children: React.ReactNode 
       selectedPosts = [...selectedPosts, ...extras].slice(0, totalPosts);
     }
 
-    // Misturar posts para criar diversidade
+    // Mix posts to create diversity
     return shuffleArray(selectedPosts);
   };
 
@@ -140,7 +140,7 @@ export function FeedAlgorithmProvider({ children }: { children: React.ReactNode 
     const currentUser = users.find(u => u.id === userId);
     if (!currentUser) return [];
 
-    // Corrigido: não filtrar os posts do próprio usuário
+    // Fixed: don't filter the user's own posts
     const availablePosts = posts; // Antes: posts.filter(post => post.userId !== userId);
     
     return distributePosts(availablePosts, userId);

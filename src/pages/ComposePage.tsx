@@ -83,8 +83,8 @@ export function ComposePage() {
               isComment 
                 ? (originalComment ? 'Responda a este comentário...' : 'Escreva seu comentário...')
                 : community 
-                  ? `O que está acontecendo em ${community.name}?`
-                  : 'O que está acontecendo?'
+                              ? `What's happening in ${community.name}?`
+            : 'What\'s happening?'
             }
           />
         </main>

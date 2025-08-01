@@ -132,21 +132,11 @@ export function ProfilePage() {
                 </Button>
               ) : (
                 <Button 
-                  variant={isFollowing ? "outline" : "default"}
-                  className="rounded-full px-6"
                   onClick={handleToggleFollow}
+                  variant={isFollowing ? "outline" : "default"}
+                  className="w-full"
                 >
-                  {isFollowing ? (
-                    <>
-                      <UserMinus className="w-4 h-4 mr-2" />
-                      Deixar de seguir
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Seguir
-                    </>
-                  )}
+                  {isFollowing ? 'Unfollow' : 'Follow'}
                 </Button>
               )}
             </div>

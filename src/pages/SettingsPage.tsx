@@ -14,6 +14,8 @@ import { Camera, ArrowLeft, Trash2, Moon, Sun, Check, Crown } from 'lucide-react
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { VerificationBadge } from '@/components/VerificationBadge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export function SettingsPage() {
   const { user, updateProfile, deleteAccount, logout, showDisplayName, setShowDisplayName } = useAuth();
@@ -97,252 +99,203 @@ export function SettingsPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Profile</CardTitle>
+              <CardTitle>Profile Settings</CardTitle>
               <CardDescription>
-                Update your personal information
+                Manage your profile information and preferences
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex flex-col items-center space-y-4">
-                <div className="relative">
-                  <Avatar className="w-24 h-24">
-                    <AvatarImage src={avatar} />
-                    <AvatarFallback>
-                      <Camera className="w-8 h-8 text-muted-foreground" />
-                    </AvatarFallback>
-                  </Avatar>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your full name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bio">Bio</Label>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="Tell us about yourself"
+                  rows={3}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="profileLink">Profile Link</Label>
+                <Input
+                  id="profileLink"
+                  value={profileLink}
+                  onChange={(e) => setProfileLink(e.target.value)}
+                  placeholder="https://your-website.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Profile Picture</Label>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={avatar || '/placeholder.svg'}
+                    alt="Profile"
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                </div>
-                <p className="text-sm text-muted-foreground text-center">
-                  Click to change profile picture
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    placeholder="Tell us about yourself..."
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="link">Link</Label>
-                  <Input
-                    id="link"
-                    value={profileLink}
-                    onChange={(e) => setProfileLink(e.target.value)}
-                    placeholder="https://yoursite.com"
+                    className="text-sm"
                   />
                 </div>
               </div>
-
               <Button onClick={handleSave} className="w-full">
                 Save Changes
               </Button>
             </CardContent>
           </Card>
 
+          {/* Display Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>Appearance</CardTitle>
+              <CardTitle>Display Settings</CardTitle>
               <CardDescription>
-                Customize the appearance of the app
+                Customize how your profile appears to others
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Theme</Label>
+                <div className="space-y-1">
+                  <Label>Display Name Instead of Username</Label>
                   <p className="text-sm text-muted-foreground">
-                    Switch between light and dark mode
+                    Show your full name instead of username in posts
                   </p>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <Sun className="h-4 w-4" />
-                  <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} />
-                  <Moon className="h-4 w-4" />
-                </div>
-              </div>
-
-              <Separator />
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Nome nos posts</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Mostrar nome de perfil em vez de nome de usuário
-                  </p>
-                </div>
-                <Switch 
-                  checked={showDisplayName} 
+                <Switch
+                  checked={showDisplayName}
                   onCheckedChange={setShowDisplayName}
                 />
               </div>
             </CardContent>
           </Card>
 
+          {/* Theme Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>Selos de Verificação</CardTitle>
+              <CardTitle>Theme</CardTitle>
               <CardDescription>
-                Adquira selos especiais para destacar seu perfil
+                Choose your preferred theme
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Selo Verde */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2">
-                    <VerificationBadge verified="green" size="md" />
-                    <div>
-                      <h3 className="font-semibold">Selo Verde (Founder)</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Disponível para os 100 primeiros usuários
-                      </p>
-                    </div>
+            <CardContent>
+              <Button onClick={toggleTheme} variant="outline" className="w-full">
+                Switch to {theme === 'light' ? 'Dark' : 'Light'} Mode
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Verification Badges */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Verification Badges</CardTitle>
+              <CardDescription>
+                Acquire special badges to highlight your profile
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">✓</span>
                   </div>
-                  <div className="ml-auto text-right">
-                    <p className="text-sm font-medium">
-                      {greenBadgeCount}/100 utilizados
+                  <div>
+                    <p className="font-semibold">Green Badge (Founder)</p>
+                    <p className="text-sm text-muted-foreground">
+                      Available for the first 100 users - {greenBadgeCount}/100 used
                     </p>
-                    <p className="text-xs text-muted-foreground">Gratuito</p>
                   </div>
                 </div>
-                
-                {user?.verified === "green" ? (
-                  <div className="flex items-center space-x-2 text-green-600">
-                    <Check className="w-4 h-4" />
-                    <span className="text-sm">Você possui o selo verde!</span>
-                  </div>
-                ) : (
-                  <Button 
-                    onClick={handleAcquireGreenBadge}
-                    disabled={!isGreenBadgeAvailable()}
-                    variant={isGreenBadgeAvailable() ? "default" : "outline"}
-                    className="w-full"
-                  >
-                    <Crown className="w-4 h-4 mr-2" />
-                    Adquirir selo verde
-                  </Button>
-                )}
-              </div>
-
-              <Separator />
-
-              {/* Selo Azul */}
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2">
-                    <VerificationBadge verified="blue" size="md" />
-                    <div>
-                      <h3 className="font-semibold">Selo Azul (Influencer)</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Disponível para todos os usuários
-                      </p>
-                    </div>
-                  </div>
-                  <div className="ml-auto text-right">
-                    <p className="text-sm font-medium">$3/mês</p>
-                    <p className="text-xs text-muted-foreground">Em breve</p>
-                  </div>
-                </div>
-                
-                <Button 
-                  onClick={handleAcquireBlueBadge}
+                <Button
+                  onClick={handleAcquireGreenBadge}
+                  disabled={!isGreenBadgeAvailable}
                   variant="outline"
-                  className="w-full"
+                  size="sm"
                 >
-                  <Crown className="w-4 h-4 mr-2" />
-                  Adquirir selo azul
+                  {isGreenBadgeAvailable ? 'Acquire' : 'Unavailable'}
                 </Button>
               </div>
-
-              {showBadgeMessage && (
-                <div className={`p-3 rounded-md text-sm ${
-                  badgeMessage.includes('Parabéns') 
-                    ? 'bg-green-50 text-green-700 border border-green-200' 
-                    : 'bg-blue-50 text-blue-700 border border-blue-200'
-                }`}>
-                  {badgeMessage}
+              
+              <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">✓</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold">Blue Badge (Influencer)</p>
+                    <p className="text-sm text-muted-foreground">
+                      Premium verification badge
+                    </p>
+                  </div>
                 </div>
+                <Button
+                  onClick={handleAcquireBlueBadge}
+                  variant="outline"
+                  size="sm"
+                >
+                  Acquire
+                </Button>
+              </div>
+              
+              {showBadgeMessage && (
+                <Alert>
+                  <AlertDescription>{badgeMessage}</AlertDescription>
+                </Alert>
               )}
             </CardContent>
           </Card>
 
+          {/* Account Actions */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+              <CardTitle>Account Actions</CardTitle>
               <CardDescription>
-                Irreversible actions for your account
+                Manage your account settings
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button 
-                variant="outline" 
-                onClick={logout}
-                className="w-full"
-              >
+              <Button onClick={() => logout()} variant="outline" className="w-full">
                 Sign Out
               </Button>
-
-              <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="destructive" className="w-full">
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Account
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Delete Account</DialogTitle>
-                    <DialogDescription>
-                      This action cannot be undone. All your data will be permanently removed.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="delete-password">Confirm your password</Label>
-                      <Input
-                        id="delete-password"
-                        type="password"
-                        value={deletePassword}
-                        onChange={(e) => setDeletePassword(e.target.value)}
-                        placeholder="Enter your password"
-                      />
-                    </div>
-                    {error && <p className="text-destructive text-sm">{error}</p>}
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button variant="destructive" onClick={handleDeleteAccount}>
-                      Delete Account
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              
+              <Button
+                onClick={() => setDeleteDialogOpen(true)}
+                variant="destructive"
+                className="w-full"
+              >
+                Delete Account
+              </Button>
             </CardContent>
           </Card>
+
+          {/* Delete Account Dialog */}
+          <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your account and remove all your data.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteAccount}>
+                  Delete Account
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          {error && <p className="text-destructive text-sm">{error}</p>}
         </div>
       </div>
     </div>

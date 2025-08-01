@@ -219,8 +219,8 @@ export function PostCard({ post }: PostCardProps) {
                   className="min-h-[80px] text-xs sm:text-sm"
                 />
                 <div className="flex space-x-2">
-                  <Button size="sm" onClick={handleEdit}>Salvar</Button>
-                  <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancelar</Button>
+                                  <Button size="sm" onClick={handleEdit}>Save</Button>
+                <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
                 </div>
               </div>
             ) : (
@@ -329,7 +329,7 @@ export function PostCard({ post }: PostCardProps) {
                     setIsEditing(true);
                   }}>
                     <Edit className="w-3 h-3 mr-2" />
-                    Editar
+                                                Edit
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={(e) => {
                     e.stopPropagation();
