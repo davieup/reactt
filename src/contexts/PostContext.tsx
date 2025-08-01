@@ -105,11 +105,16 @@ export function PostProvider({ children }: { children: React.ReactNode }) {
     }).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   };
 
+  const sanitize = (str: string) => str.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
   const addPost = (userId: string, content: string, image?: string, video?: string, communityId?: string) => {
+    // Validação: não permitir posts vazios ou só com espaços
+    if (!content || !content.trim()) return;
+    const safeContent = sanitize(content.trim());
     const newPost: Post = {
       id: Date.now().toString(),
       userId,
-      content,
+      content: safeContent,
       image,
       video,
       timestamp: new Date(),

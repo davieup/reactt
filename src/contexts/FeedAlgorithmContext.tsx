@@ -101,12 +101,26 @@ export function FeedAlgorithmProvider({ children }: { children: React.ReactNode 
       posts.sort((a, b) => calculatePostScore(b, currentUserId) - calculatePostScore(a, currentUserId));
 
     // Selecionar posts de cada categoria
-    const selectedPosts: Post[] = [
+    let selectedPosts: Post[] = [
       ...sortByScore(followedPosts).slice(0, followedCount),
       ...sortByScore(greenBadgePosts).slice(0, greenBadgeCount),
       ...sortByScore(blueBadgePosts).slice(0, blueBadgeCount),
       ...sortByScore(unverifiedPosts).slice(0, unverifiedCount)
     ];
+
+    // Se não atingiu o total desejado, preenche com posts restantes das categorias
+    if (selectedPosts.length < totalPosts) {
+      // Junta todos os posts restantes que não foram selecionados ainda
+      const allSorted = sortByScore([
+        ...followedPosts,
+        ...greenBadgePosts,
+        ...blueBadgePosts,
+        ...unverifiedPosts
+      ]);
+      const alreadySelectedIds = new Set(selectedPosts.map(p => p.id));
+      const extras = allSorted.filter(p => !alreadySelectedIds.has(p.id));
+      selectedPosts = [...selectedPosts, ...extras].slice(0, totalPosts);
+    }
 
     // Misturar posts para criar diversidade
     return shuffleArray(selectedPosts);
@@ -126,8 +140,8 @@ export function FeedAlgorithmProvider({ children }: { children: React.ReactNode 
     const currentUser = users.find(u => u.id === userId);
     if (!currentUser) return [];
 
-    // Filtrar posts que não são do próprio usuário
-    const availablePosts = posts.filter(post => post.userId !== userId);
+    // Corrigido: não filtrar os posts do próprio usuário
+    const availablePosts = posts; // Antes: posts.filter(post => post.userId !== userId);
     
     return distributePosts(availablePosts, userId);
   };

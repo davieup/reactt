@@ -32,6 +32,13 @@ const defaultUsers: AuthUser[] = [];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function encode(str: string) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function decode(str: string) {
+  return decodeURIComponent(escape(atob(str)));
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [users, setUsers] = useState<AuthUser[]>([]);
@@ -60,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = (email: string, password: string): boolean => {
-    const foundUser = users.find(u => u.email === email && u.password === password);
+    const foundUser = users.find(u => u.email === email && decode(u.password) === password);
     if (foundUser) {
       setUser(foundUser);
       localStorage.setItem('currentUser', JSON.stringify(foundUser));
@@ -78,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const newUser: AuthUser = {
       id: Date.now().toString(),
       email,
-      password,
+      password: encode(password),
       username,
       name,
       avatar,
@@ -114,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteAccount = (password: string): boolean => {
-    if (!user || user.password !== password) return false;
+    if (!user || decode(user.password) !== password) return false;
     
     const updatedUsers = users.filter(u => u.id !== user.id);
     setUsers(updatedUsers);
