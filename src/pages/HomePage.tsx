@@ -6,7 +6,6 @@ import { PostCard } from '@/components/PostCard';
 import { ResponsiveHeader } from '@/components/ResponsiveHeader';
 import { AppLayout } from '@/components/AppLayout';
 import { VerificationInfo } from '@/components/VerificationInfo';
-import { FeedDistributionInfo } from '@/components/FeedDistributionInfo';
 import { useNavigate } from 'react-router-dom';
 
 export function HomePage() {
@@ -35,9 +34,8 @@ export function HomePage() {
         
         <main className="divide-y divide-border">
           {showVerificationInfo && (
-            <div className="p-4 space-y-4">
+            <div className="p-4">
               <VerificationInfo />
-              <FeedDistributionInfo />
             </div>
           )}
           {feedPosts.map((post) => (

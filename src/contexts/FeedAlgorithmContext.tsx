@@ -53,7 +53,7 @@ export function FeedAlgorithmProvider({ children }: { children: React.ReactNode 
     }
 
     // Bônus por engajamento
-    const engagementRate = (post.likes.length + post.comments.length + post.reposts.length) / Math.max(post.views, 1);
+    const engagementRate = (post.likes.length + post.comments.length + post.reposts.length) / Math.max(post.viewedBy.length, 1);
     score += engagementRate * 10;
 
     // Bônus por recência (posts mais recentes têm prioridade)

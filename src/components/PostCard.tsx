@@ -308,7 +308,7 @@ export function PostCard({ post }: PostCardProps) {
               className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-1 sm:p-2"
             >
               <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="text-xs hidden sm:inline">{post.views || 0}</span>
+              <span className="text-xs hidden sm:inline">{post.viewedBy.length}</span>
             </Button>
 
             {post.userId === user.id && (
