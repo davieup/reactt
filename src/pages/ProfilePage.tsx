@@ -55,8 +55,8 @@ export function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background overflow-y-auto">
-      <div className="max-w-2xl mx-auto h-full">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-2xl mx-auto">
         <header className="sticky top-0 bg-background/80 backdrop-blur-md border-b border-border p-4 z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">

@@ -27,7 +27,7 @@ export function AppLayout({
       {showSidebar && isDesktop && <Sidebar />}
       
       {/* Main Content */}
-      <div className={`${isDesktop && showSidebar ? 'ml-64' : ''} min-h-screen`}>
+      <div className={`${isDesktop && showSidebar ? 'ml-64' : ''}`}>
         <ResponsiveContainer maxWidth={maxWidth} padding={padding}>
           {children}
         </ResponsiveContainer>

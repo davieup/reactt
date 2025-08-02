@@ -19,7 +19,7 @@ export function TrendFeedPage() {
   const displayHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
 
   return (
-    <div className="min-h-screen bg-background overflow-y-auto">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="glass-effect border-b border-border sticky top-0 z-40">
         <div className="max-w-md mx-auto px-4 py-4">
