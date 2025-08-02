@@ -58,7 +58,7 @@ export function SearchPage() {
   };
 
   return (
-    <div className="bg-background pb-20">
+    <div className="bg-background min-h-screen overflow-y-auto pb-20">
       {/* Header */}
       <header className="glass-effect border-b border-border sticky top-0 z-40">
         <div className="max-w-md mx-auto px-4 py-4">
@@ -97,7 +97,7 @@ export function SearchPage() {
       </header>
 
       {/* Results */}
-      <main className="max-w-md mx-auto pb-4">
+      <main className="max-w-md mx-auto pb-4 px-4">
         {searchQuery ? (
           /* Search Results */
           <div className="space-y-6">
