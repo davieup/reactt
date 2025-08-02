@@ -1,3 +1,4 @@
+
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { usePosts } from '@/contexts/PostContext';
@@ -19,7 +20,7 @@ export function TrendFeedPage() {
   const displayHashtag = hashtag.startsWith('#') ? hashtag : `#${hashtag}`;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background pb-20">
       {/* Header */}
       <header className="glass-effect border-b border-border sticky top-0 z-40">
         <div className="max-w-md mx-auto px-4 py-4">
@@ -51,7 +52,7 @@ export function TrendFeedPage() {
           </div>
         ) : (
           <div className="text-center py-12">
-                          <p className="text-text-muted text-lg">No posts found</p>
+            <p className="text-text-muted text-lg">No posts found</p>
             <p className="text-text-muted text-sm mt-2">
               Be the first to post about {displayHashtag}
             </p>

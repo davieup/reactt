@@ -78,7 +78,7 @@ export function FollowPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background pb-20">
       <div className="max-w-2xl mx-auto p-4">
         <div className="flex items-center space-x-4 mb-6">
           <Button 
@@ -99,7 +99,7 @@ export function FollowPage() {
         <Tabs defaultValue="following" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="following">
-                              Following ({following.length})
+              Following ({following.length})
             </TabsTrigger>
             <TabsTrigger value="followers">
               Seguidores ({followers.length})

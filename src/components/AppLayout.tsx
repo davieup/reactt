@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useResponsive } from '@/hooks/useResponsive';
 import { Sidebar } from '@/components/Sidebar';
@@ -22,7 +23,7 @@ export function AppLayout({
   const { isDesktop } = useResponsive();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Sidebar - Only on desktop */}
       {showSidebar && isDesktop && <Sidebar />}
       
@@ -37,4 +38,4 @@ export function AppLayout({
       {showBottomNav && !isDesktop && <BottomNav />}
     </div>
   );
-} 
+}

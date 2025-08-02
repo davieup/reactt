@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Post, Comment } from '@/types';
@@ -7,7 +8,7 @@ import { useCommunities } from '@/contexts/CommunityContext';
 import { useResponsive } from '@/hooks/useResponsive';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Heart, MessageCircle, Repeat2, MoreHorizontal, Eye, Edit, Trash2, Users, ChevronDown, ChevronUp } from 'lucide-react';
+import { Heart, MessageCircle, Repeat2, MoreHorizontal, Eye, Edit, Trash2, Users } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Textarea } from '@/components/ui/textarea';
 import { VerificationBadge } from './VerificationBadge';
@@ -24,7 +25,6 @@ export function PostCard({ post }: PostCardProps) {
   const { isMobile, isTablet, isDesktop } = useResponsive();
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(post.content);
-  const [showComments, setShowComments] = useState(false);
 
   if (!user) return null;
 
@@ -79,87 +79,6 @@ export function PostCard({ post }: PostCardProps) {
     }
   };
 
-  const renderComment = (comment: Comment, isReply = false) => {
-    const commentUser = users.find(u => u.id === comment.userId);
-    if (!commentUser) return null;
-    
-    const isCommentLiked = comment.likes?.includes(user.id) || false;
-    
-    return (
-      <div key={comment.id} className={`${isReply ? 'ml-8 border-l-2 border-border pl-3' : ''} py-2`}>
-        <div className="flex space-x-2">
-          <Avatar className="h-6 w-6 flex-shrink-0">
-            <AvatarImage src={commentUser.avatar} />
-            <AvatarFallback>{commentUser.name.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-1 mb-1">
-              <span className="font-medium text-xs">
-                {showDisplayName ? commentUser.name : `@${commentUser.username}`}
-              </span>
-              <span className="text-muted-foreground text-xs">·</span>
-              <span className="text-muted-foreground text-xs">
-                {comment.timestamp.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}
-              </span>
-            </div>
-            <p className="text-sm text-foreground mb-1">{comment.content}</p>
-            {comment.image && (
-              <img src={comment.image} alt="Comment" className="rounded-lg max-w-full h-32 object-cover mb-1" />
-            )}
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  likeComment(comment.id, user.id);
-                }}
-                className={`flex items-center space-x-1 text-xs rounded-full p-1 ${
-                  isCommentLiked 
-                    ? 'text-red-500 hover:text-red-600' 
-                    : 'text-muted-foreground hover:text-red-500'
-                }`}
-              >
-                <Heart className={`w-3 h-3 ${isCommentLiked ? 'fill-current' : ''}`} />
-                <span>{comment.likes?.length || 0}</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/comment/${comment.id}`);
-                }}
-                className="flex items-center space-x-1 text-xs text-muted-foreground hover:text-blue-500 rounded-full p-1"
-              >
-                <MessageCircle className="w-3 h-3" />
-                <span>Responder</span>
-              </Button>
-            </div>
-            {comment.replies && comment.replies.length > 0 && (
-              <div className="mt-2">
-                {comment.replies.slice(0, 2).map(reply => renderComment(reply, true))}
-                {comment.replies.length > 2 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/comment/${comment.id}`);
-                    }}
-                    className="text-xs text-primary hover:text-primary/80 ml-8"
-                  >
-                    Ver mais {comment.replies.length - 2} respostas
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const renderContentWithHashtags = (text: string) => {
     const parts = text.split(/(#\w+)/g);
     return parts.map((part, index) => 
@@ -188,14 +107,14 @@ export function PostCard({ post }: PostCardProps) {
         </Avatar>
         
         <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-              <div className="flex items-center space-x-1">
-                <span className="font-semibold text-foreground text-xs sm:text-sm">
+          <div className="flex items-center justify-between mb-1">
+            <div className="flex items-center space-x-1">
+              <span className="font-semibold text-foreground text-xs sm:text-sm">
                 {showDisplayName ? postUser.name : `@${postUser.username}`}
               </span>
               <VerificationBadge verified={postUser.verified} size="sm" />
-                <span className="text-muted-foreground text-xs sm:text-sm">·</span>
-                <span className="text-muted-foreground text-xs sm:text-sm">
+              <span className="text-muted-foreground text-xs sm:text-sm">·</span>
+              <span className="text-muted-foreground text-xs sm:text-sm">
                 {post.timestamp.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}
               </span>
             </div>
@@ -219,8 +138,8 @@ export function PostCard({ post }: PostCardProps) {
                   className="min-h-[80px] text-xs sm:text-sm"
                 />
                 <div className="flex space-x-2">
-                                  <Button size="sm" onClick={handleEdit}>Save</Button>
-                <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                  <Button size="sm" onClick={handleEdit}>Save</Button>
+                  <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
                 </div>
               </div>
             ) : (
@@ -255,15 +174,12 @@ export function PostCard({ post }: PostCardProps) {
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                setShowComments(!showComments);
+                handleComment();
               }}
               className="flex items-center space-x-1 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 rounded-full p-1 sm:p-2"
             >
               <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="text-xs hidden sm:inline">{post.comments.length}</span>
-              {post.comments.length > 0 && (
-                showComments ? <ChevronUp className="w-2 h-2 sm:w-3 sm:h-3" /> : <ChevronDown className="w-2 h-2 sm:w-3 sm:h-3" />
-              )}
             </Button>
             
             <Button
@@ -329,7 +245,7 @@ export function PostCard({ post }: PostCardProps) {
                     setIsEditing(true);
                   }}>
                     <Edit className="w-3 h-3 mr-2" />
-                                                Edit
+                    Edit
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={(e) => {
                     e.stopPropagation();
@@ -342,16 +258,6 @@ export function PostCard({ post }: PostCardProps) {
               </DropdownMenu>
             )}
           </div>
-          
-          {/* Comments Section */}
-          {showComments && post.comments.length > 0 && (
-            <div className="mt-4 border-t border-border pt-3">
-              <div className="space-y-2">
-                {post.comments.slice(0, 3).map(comment => renderComment(comment))}
-                {/* Botão de ver mais comentários removido */}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

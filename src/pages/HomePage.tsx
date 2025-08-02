@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePosts } from '@/contexts/PostContext';
@@ -29,8 +30,9 @@ export function HomePage() {
   }, [user, getPersonalizedFeed]);
 
   return (
-    <AppLayout>
-      <ResponsiveHeader />
+    <div className="bg-background pb-20 md:pb-0">
+      <AppLayout showSidebar={true} showBottomNav={true}>
+        <ResponsiveHeader />
         
         <main className="divide-y divide-border">
           {showVerificationInfo && (
@@ -42,6 +44,7 @@ export function HomePage() {
             <PostCard key={post.id} post={post} />
           ))}
         </main>
-    </AppLayout>
+      </AppLayout>
+    </div>
   );
 }

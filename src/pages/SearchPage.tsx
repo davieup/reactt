@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, X, TrendingUp, Users, Plus, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -59,7 +58,7 @@ export function SearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="bg-background pb-20">
       {/* Header */}
       <header className="glass-effect border-b border-border sticky top-0 z-40">
         <div className="max-w-md mx-auto px-4 py-4">
@@ -97,7 +96,8 @@ export function SearchPage() {
         </div>
       </header>
 
-      <main className="max-w-md mx-auto px-4 py-4">
+      {/* Results */}
+      <main className="max-w-md mx-auto pb-4">
         {searchQuery ? (
           /* Search Results */
           <div className="space-y-6">
